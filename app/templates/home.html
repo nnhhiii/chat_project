@@ -1,0 +1,497 @@
+{% load static %}
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{%static 'css/message.css'%}">
+
+    <title>chat online</title>
+
+</head>
+<body>
+    <div class="col_menu">
+        <a href=""><img src="https://img.icons8.com/?size=256&id=Gc9qmZNN9yFN&format=png" style="margin-top: 100px;"></a>
+        <a href=""><img src="https://img.icons8.com/?size=256&id=61161&format=png"></a>
+        <a href=""><img src="https://img.icons8.com/?size=256&id=43571&format=png"></a>
+        <a href=""><img src="https://img.icons8.com/?size=256&id=88004&format=png"></a>
+        <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
+        <a><img src="https://img.icons8.com/?size=256&id=14092&format=png"></a>
+    </div>
+    <div class="hienthi">
+        <div class="col_left">
+            <div class="mess">Messages</div>
+            <div class="layout_tim_kiem">
+                <form id="timkiem_form"  enctype="multipart/form-data"method="post">
+                    <input class="tim_kiem" name="timkiem">
+                    <img src="https://img.icons8.com/search">
+                </form>
+            </div>
+
+            <div class="chat_users_list"></div>
+
+        </div>
+    </div>
+    <div class="col_right">
+        <div class="ten">
+            <a href="" style="color:black">
+            <div class="ava"style="padding:27px"></div>
+            <div class="username"></div>
+            </a>
+            <br><br>
+            <div class="mini_content"></div>
+            <div style="position: absolute; right:20px; top:17px">
+                <div class="nghe_goi" id="more_info" onclick="myFunction()"></div>
+            </div>
+        </div>
+        <div class="content"></div>
+        <div class="chat_box">
+            <form id="messageForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea type="text" name="content" placeholder="Message..."></textarea>
+                <img class="icon" id="smile_icon" onclick="showIcon()" src="https://img.icons8.com/?size=512&id=y6j3NCqRGOcj&format=png">
+                    <div id="myIcon">
+                        <button type="button" class="icon_cuoi">😀</button>
+                        <button type="button" class="icon_cuoi">&#128513;</button>
+                        <button type="button" class="icon_cuoi">&#128514;</button>
+                        <button type="button" class="icon_cuoi">&#129392;</button>
+                        <button type="button" class="icon_cuoi">&#129325;</button>
+                        <button type="button" class="icon_cuoi">&#128517;</button>
+                        <button type="button" class="icon_cuoi">&#128518;</button>
+                        <button type="button" class="icon_cuoi">&#128519;</button>
+                        <button type="button" class="icon_cuoi">&#128520;</button>
+                        <button type="button" class="icon_cuoi">&#128521;</button>
+                        <button type="button" class="icon_cuoi">&#128522;</button>
+                        <button type="button" class="icon_cuoi">&#128523;</button>
+                        <button type="button" class="icon_cuoi">&#128524;</button>
+                        <button type="button" class="icon_cuoi">&#128525;</button>
+                        <button type="button" class="icon_cuoi">&#128526;</button>
+                        <button type="button" class="icon_cuoi">&#128527;</button>
+                        <button type="button" class="icon_cuoi">&#128528;</button>
+                        <button type="button" class="icon_cuoi">&#128529;</button>
+                        <button type="button" class="icon_cuoi">&#128530;</button>
+                        <button type="button" class="icon_cuoi">&#128531;</button>
+                        <button type="button" class="icon_cuoi">&#128532;</button>
+                        <button type="button" class="icon_cuoi">&#128533;</button>
+                        <button type="button" class="icon_cuoi">&#129297;</button>
+                        <button type="button" class="icon_cuoi">&#129322;</button>
+                        <button type="button" class="icon_cuoi">&#129398;</button>
+                    </div>
+                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;">
+                <label for="fileInput">
+                    <img class="icon" id="attachment_icon" src="https://img.icons8.com/?size=512&id=114320&format=png">
+                </label>
+                
+                <i style="scale:1.5; margin-top: 5px;width:40px; height:40px" class="icon fa-solid fa-heart" id="button_heart"></i>
+            </form>
+        </div>
+    </div>
+    
+    <div id="info">
+        <div class="layout_info"><div class="info_1">Chi tiết</div></div>
+        <div style="height:580px;border-bottom: 1px solid lightgray;">
+            <a href="">
+                <div class="mess1">
+                    <div class="ava"></div>
+                    <div class="username"></div><br><br>
+                    <div class="mini_content"></div>
+                </div>
+            </a>
+        </div>
+             
+            <a class="info_2" style="text-decoration:none;float:left"data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
+            <div class="modal fade" id="modal-id">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                        <div class="modal-header">
+                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
+                        </div>
+                        <div class="modal-body" style="padding:0">
+                        <form action="" method="post" enctype="multipart/form-data">
+                            <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
+                        </form>
+                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+{#<script src="{%static 'js/message.js'%}"></script>#}
+{#<script src="{%static 'js/chat_users.js'%}"></script>#}
+
+<script>
+    var currentUserId = "{{ request.session.current_user_id }}";
+    // Hàm để ẩn/hiện khung thông tin
+    function myFunction() {
+        var colRight = document.querySelector(".col_right");
+        var info = document.getElementById("info");
+
+        if (colRight.style.right === "20%") {
+            colRight.style.right = "0";
+            info.style.display = "none";
+        } else {
+            colRight.style.right = "20%";
+            info.style.display = "block";
+        }
+    }
+
+    // Hiển thị icon cảm xúc
+    function showIcon() {
+        document.getElementById("myIcon").style.display = "block";
+    }
+
+    $('textarea[name="content"]').keyup(function () {
+        if ($(this).val() !== "") {
+            $("#button_heart").removeClass("fa-heart").addClass("fa-paper-plane");
+        } else {
+            $("#button_heart").removeClass("fa-paper-plane").addClass("fa-heart");
+        }
+    });
+
+    // Xử lý khi người dùng nhấn phím Enter để gửi tin nhắn
+    $('textarea[name="content"]').keydown(function (e) {
+        if (e.keyCode == 13 && !e.shiftKey && $(this).val().trim() !== "") {
+            e.preventDefault();
+            $("#messageForm").submit();
+        }
+    });
+
+    $("#button_heart").click(function () {
+        if ($("#button_heart").hasClass("fa-paper-plane")) {
+            // Nếu là icon gửi, thì gửi form
+            $("#messageForm").submit();
+            $("#button_heart").removeClass("fa-paper-plane").addClass("fa-heart");
+        } else if ($("#button_heart").hasClass("fa-heart")) {
+            $('textarea[name="content"]').val('❤️');
+            $("#messageForm").submit();
+        }
+    });
+
+
+    // Thêm icon cảm xúc vào tin nhắn
+    $(".icon_cuoi").click(function () {
+        var icon = $(this).text();
+        var current = $('textarea[name="content"]').val();
+        $('textarea[name="content"]').val(current + icon);
+    });
+
+
+    // Ẩn icon cảm xúc khi click ra ngoài
+    document.addEventListener('click', function (event) {
+        var isClickInside = document.getElementById("smile_icon").contains(event.target);
+        if (!isClickInside) {
+            document.getElementById("myIcon").style.display = "none";
+        }
+    });
+
+
+    const imgBaseUrl = '/static/img/';
+function fetchChatUsers() {
+    // Gọi API lấy danh sách người dùng đã chat
+    $.ajax({
+        url: '/api/users/chat-users/',
+        method: 'GET',
+        success: function(users) {
+            if (users.length > 0) {
+                // Duyệt qua từng user để hiển thị
+                $.each(users, function (index, user) {
+                    let userHTML = `
+                    <a onclick="openChat(${user.id}, null)">
+                        <div class="mess1" id="chat-user" style="position:relative" data-chat-user-id="${user.id}">
+                            <div class="ava" style="background-image: url('${imgBaseUrl}${user.avatar}'); background-position: center"></div>
+                            <div class="username">${user.username}</div>
+                            <br><br>
+                            <div class="mini_content" style="max-width:200px;">
+                                <span class="latest_message">Đang tải...</span>
+                                <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">Đang tải...</div>
+                            </div>
+                        </div>
+                    </a>`;
+                    $('.chat_users_list').append(userHTML);
+                    fetchLatestMessage(user.id, null);
+                });
+            }
+        },
+        error: function(error) {
+            console.error('Error fetching chat users:', error);
+        }
+    });
+}
+function fetchChatRooms() {
+    $.ajax({
+        url: `/api/user-chat-rooms/${currentUserId}/`,
+        method: 'GET',
+        success: function (rooms) {
+            if (rooms.length > 0) {
+                // Hiển thị các phòng chat
+                $.each(rooms, function (index, room) {
+                    let roomHTML = `
+                                <a onclick="openChat(null, ${room.id})">
+                                    <div class="mess1" id="chat-room" data-chat-room-id="${room.id}" style="position:relative">
+                                        <div class="ava" style="background-image: url('${imgBaseUrl}${room.avatar}'   );"></div>
+                                        <div class="username">${room.room_name}</div>
+                                        <br><br>
+                                        <div class="mini_content" style="max-width:200px;">
+                                            <span class="latest_message">Đang tải...</span>
+                                            <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">Đang tải...</div>
+                                        </div>
+                                    </div>
+                                </a>`;
+                    $('.chat_users_list').append(roomHTML);
+                    fetchLatestMessage(null, room.id);
+                });
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching chat rooms:', error);
+        }
+    });
+}
+// Hàm lấy tin nhắn gần nhất của một user
+function fetchLatestMessage(user_id, room_id) {
+    if (user_id === null && room_id === null) return;
+
+    let url = `/api/messages/get-messages`;
+    if (user_id) {
+        url += `?user_id=${user_id}`;
+    } else if (room_id) {
+        url += `?room_id=${room_id}`;
+    }
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function(messages) {
+            console.log(messages);
+            if (messages.length > 0) {
+                let latestMessage = messages[messages.length - 1];  // Lấy tin nhắn gần nhất
+                let miniContent = user_id !== null ?
+                    $(`[data-chat-user-id="${user_id}"] .mini_content .latest_message`) :
+                    $(`[data-chat-room-id="${room_id}"] .mini_content .latest_message`);
+
+                let timeDescription = user_id !== null ?
+                    $(`[data-chat-user-id="${user_id}"] .mini_content .time_description`) :
+                    $(`[data-chat-room-id="${room_id}"] .mini_content .time_description`);
+
+                miniContent.text(latestMessage.content);  // Nội dung tin nhắn
+                timeDescription.text(calculateTimeAgo(latestMessage.created_at));  // Tính toán thời gian đã qua
+            }
+        },
+        error: function(error) {
+            console.error('Error fetching latest message:', error);
+        }
+    });
+}
+
+
+// Hàm tính toán thời gian đã qua (ví dụ: 1 phút trước, 2 giờ trước)
+function calculateTimeAgo(timestamp) {
+    let timeAgo = new Date(timestamp);
+    let now = new Date();
+    let difference = Math.floor((now - timeAgo) / 1000);  // Tính sự chênh lệch theo giây
+
+    if (difference < 60) {
+        return `${difference} giây trước`;
+    } else if (difference < 3600) {
+        return `${Math.floor(difference / 60)} phút trước`;
+    } else if (difference < 86400) {
+        return `${Math.floor(difference / 3600)} giờ trước`;
+    } else {
+        return `${Math.floor(difference / 86400)} ngày trước`;
+    }
+}
+function openChat(userId, roomId) {
+    if (userId) {
+        // Thay đổi URL mà không tải lại trang
+        history.pushState({}, '', `/messages/user/${userId}`);
+    } else if (roomId) {
+        history.pushState({}, '', `/messages/room/${roomId}`);
+    }
+    showMessages(userId, roomId);
+}
+
+// Hàm để hiển thị tin nhắn khi nhấn vào user
+function showMessages(recipientId = null, roomId = null) {
+    // Xóa nội dung hiện tại
+    $('.content').html('');
+
+    if (roomId) {
+        setupWebSocket(roomId, null, currentUserId);
+        loadMessage(roomId, null, currentUserId);
+    } else if (recipientId) {
+        setupWebSocket(null, recipientId, currentUserId);
+        loadMessage(null, recipientId, currentUserId);
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetchChatUsers();  // Gọi API khi trang được tải
+    fetchChatRooms()
+});
+
+function setupWebSocket(roomId = null, recipientId = null, currentUserId = null) {
+    let ws_url = 'ws://' + window.location.host + '/ws/app/';
+
+    if (roomId) {
+        ws_url += `rooms/${roomId}/`;  // WebSocket kết nối theo phòng
+    } else if (recipientId) {
+        ws_url += `users/${recipientId}/`;  // WebSocket kết nối theo người dùng
+    }
+
+    const chatSocket = new WebSocket(ws_url);
+
+
+    // Gửi tin nhắn qua WebSocket và API khi form được submit
+    $('#messageForm').off('submit').on('submit', function (event) {
+        event.preventDefault();
+        const message = $('textarea[name="content"]').val();
+        if (message.trim() !== "") {
+            // Gửi tin nhắn qua WebSocket
+            chatSocket.send(JSON.stringify({'message': message}));
+
+            // Dữ liệu để gửi qua API
+            const payload = {
+                'content': message,
+                'message_by': currentUserId,
+                'message_type': 'text'
+            };
+
+            if (roomId) {
+                payload['room'] = roomId;
+                payload['message_to'] = null;
+            } else if (recipientId) {
+                payload['room'] = null;
+                payload['message_to'] = recipientId;
+            }
+
+            // Gửi tin nhắn đến API để lưu vào DB
+            addMessage(payload);
+
+            // Xóa nội dung sau khi gửi
+            $('textarea[name="content"]').val('');
+        }
+    });
+
+    // Kết nối WebSocket thành công, tải tin nhắn cũ
+    chatSocket.onopen = function () {
+        console.log('WebSocket kết nối thành công');
+    };
+
+    // Xử lý khi WebSocket bị ngắt
+    chatSocket.onclose = function () {
+        console.error('WebSocket kết nối bị đóng. Đang thử kết nối lại...');
+        reconnectWebSocket();
+    };
+}
+
+// Hàm thêm tin nhắn vào API
+function addMessage(payload) {
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/messages/',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        data: JSON.stringify(payload),
+        success: function (data) {
+            console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
+            displayMessage(data, payload.message_by);
+        },
+        error: function(xhr, status, error) {
+            console.error("Lỗi khi lưu tin nhắn:", error);
+            console.log("data status:", xhr.status);       // Mã lỗi HTTP
+            console.log("data text:", xhr.dataText);   // Nội dung chi tiết của phản hồi từ server
+        }
+    });
+}
+
+// Lấy các tin nhắn cũ qua API
+function loadMessage(roomId = null, recipientId = null, currentUserId) {
+    let apiUrl = '/api/messages/get-messages';
+
+    if (roomId) {
+        apiUrl += `?room_id=${roomId}`;  // Lấy tin nhắn theo phòng
+    } else if (recipientId) {
+        apiUrl += `?user_id=${recipientId}`;  // Lấy tin nhắn 1-1
+    }
+
+    // Gọi API để lấy các tin nhắn cũ
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        success: function (data) {
+            data.forEach(message => {
+                displayMessage(message, currentUserId);
+            });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Lỗi khi tải tin nhắn cũ:', textStatus, errorThrown);
+        }
+    });
+}
+
+function displayMessage(data, currentUserId) {
+    let messageHtml;
+    let messageClass;
+
+    if (data.message_by == currentUserId) {
+        messageClass = 'sent-message';
+    } else {
+        messageClass = 'received-message';
+    }
+    console.log(currentUserId)
+    switch (data.message_type) {
+        case 'text':
+            messageHtml = '<div class="content-message"><div class=" text-message ' + messageClass + '">' + data.content + '</div></div>';
+            break;
+        case 'image':
+            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><img src="' + data.content + '" alt="Image" /></div></div>';
+            break;
+        case 'video':
+            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><video controls><source src="' + data.content + '" type="video/mp4">Trình duyệt của bạn không hỗ trợ video.</video></div></div>';
+            break;
+        case 'link':
+            messageHtml = '<div class="content-message"><div class=" link-message ' + messageClass + '"><a href="' + data.content + '" target="_blank">' + data.content + '</a></div></div>';
+            break;
+        default:
+            messageHtml = '<div class="content-message"><div class="unknown-message">Tin nhắn không xác định.</div></div>';
+    }
+
+    $('.content').append(messageHtml);
+    $('.content').scrollTop($('.content')[0].scrollHeight);
+}
+
+// Hàm lấy giá trị CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Thử kết nối lại WebSocket
+    function reconnectWebSocket() {
+        setTimeout(function () {
+            location.reload();
+        }, 5000);
+    }
+
+</script>
+
+
