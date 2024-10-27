@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-*$remq*i^)a)b66(4k-f0so6sf8m-193$-*lv$5&_%_=^*!5&j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'chat-project-h0ws.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost', 'chat-project-h0ws.onrender.com']
 
 
 
