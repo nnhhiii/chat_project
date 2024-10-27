@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 
 
@@ -27,7 +28,8 @@ SECRET_KEY = 'django-insecure-*$remq*i^)a)b66(4k-f0so6sf8m-193$-*lv$5&_%_=^*!5&j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'chat-project-h0ws.onrender.com']
+
 
 
 # Application definition
@@ -89,15 +91,26 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'chat_project',
+#         'USER': 'postgres',
+#         'PASSWORD': '123',
+#         'HOST': 'localhost',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chat_project',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
+        'NAME': 'chat_project_mrii',
+        'USER': 'chat_project_mrii_user',
+        'PASSWORD': 'brkFsu41zyDfUoLTHMqTYzFiRfwyptXT',
+        'HOST': 'dpg-csf4dmbtq21c738jf29g-a.oregon-postgres.render.com',
     }
 }
+
 
 
 # Password validation
