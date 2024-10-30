@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class User(models.Model):
     username = models.CharField(max_length=50)
@@ -18,14 +19,17 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class ChatRoom(models.Model):
-    room_name = models.CharField(max_length=100, unique=True)
-    avatar = models.CharField(max_length=500, default='chatroom.jpeg')
+    name = models.CharField(max_length=255, unique=True)
+    avatar = models.ImageField(upload_to='chat_rooms/', null=True, blank=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_rooms', default = 1)
+    members = models.ManyToManyField(User, through='UserChatRoom', related_name='chat_rooms')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 class UserChatRoom(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+
     class Meta:
         unique_together = ('user', 'room')
 
@@ -37,3 +41,7 @@ class Message(models.Model):
     message_type = models.CharField(max_length=10, choices=[('text', 'Text'), ('image', 'Image'), ('video', 'Video')])
     created_at = models.DateTimeField(auto_now_add=True)
     read_status = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return self.name

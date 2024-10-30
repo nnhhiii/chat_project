@@ -1,15 +1,22 @@
-from rest_framework import viewsets
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated
 
 from .forms import LoginForm
 from .models import User, ChatRoom, Message, UserChatRoom
 from .serializers import UserSerializer, ChatRoomSerializer, MessageSerializer, UserChatRoomSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.sessions.models import Session
+from .forms import GroupForm
+from rest_framework.decorators import api_view
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -18,16 +25,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='chat-users')
     def get_chat_users(self, request):
-        current_user_id = request.session.get('current_user_id')  # Lấy ID người dùng hiện tại
+        current_user_id = request.session.get('current_user_id')
 
-        # Lấy tất cả những người đã gửi hoặc nhận tin nhắn từ current_user_id
+        # Lấy tất cả những người đã gửi hoặc nhận tin nhắn
         sent_messages = Message.objects.filter(message_by=current_user_id).values_list('message_to', flat=True)
         received_messages = Message.objects.filter(message_to=current_user_id).values_list('message_by', flat=True)
-
-        # Gộp các user đã nhắn tin (bao gồm gửi và nhận), loại bỏ các giá trị trùng lặp
         chat_users_ids = set(list(sent_messages) + list(received_messages))
-
-        # Lấy thông tin user từ các ID
         chat_users = User.objects.filter(id__in=chat_users_ids)
         serializer = UserSerializer(chat_users, many=True)
 
@@ -43,36 +46,49 @@ class UserChatRoomViewSet(viewsets.ViewSet):
     queryset = UserChatRoom.objects.all()
     serializer_class = UserChatRoomSerializer
 
-    def list(self, request, user_id=None):
-        if user_id:
-            # Lấy tất cả UserChatRoom cho user_id
-            user_chat_rooms = UserChatRoom.objects.filter(user_id=user_id)
+    def list(self, request, *args, **kwargs):
+        user_id = kwargs.get('user_id')
+        user_chat_rooms = UserChatRoom.objects.filter(user_id=user_id) if user_id else UserChatRoom.objects.all()
+        serializer = self.serializer_class(user_chat_rooms, many=True)
+        return Response(serializer.data)
 
-            # Nếu không có phòng chat nào, trả về thông báo
-            if not user_chat_rooms.exists():
-                return Response({'detail': 'User has not participated in any chat rooms.'}, status=200)
+    @action(detail=False, methods=['post'])
+    def add_user_to_chat_room(self, request):
+        user_id = request.data.get('user_id')
+        chat_room_id = request.data.get('chat_room_id')
 
-            # Nếu có phòng chat, lấy danh sách phòng
-            chat_rooms = [user_chat_room.room for user_chat_room in user_chat_rooms]
-            serializer = ChatRoomSerializer(chat_rooms, many=True)
-            return Response(serializer.data)
+        if not user_id or not chat_room_id:
+            return Response({'error': 'user_id và chat_room_id là bắt buộc.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'detail': 'User ID not provided.'}, status=400)
+        try:
+            user = User.objects.get(id=user_id)
+            chat_room = ChatRoom.objects.get(id=chat_room_id)
+            user_chat_room, created = UserChatRoom.objects.get_or_create(user=user, chat_room=chat_room)
+
+            if created:
+                return Response({'message': 'User added to chat room successfully.'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'message': 'User already in this chat room.'}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except ChatRoom.DoesNotExist:
+            return Response({'error': 'Chat room not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
     @action(detail=False, methods=['get'], url_path='get-messages')
     def get_messages(self, request):
-        current_user_id = request.user.id  # Lấy người dùng hiện tại từ request
-        other_user_id = request.query_params.get('user_id')  # Lấy user_id từ query parameters
-        room_id = request.query_params.get('room_id')  # Lấy room_id từ query parameters (nếu có)
+        current_user_id = request.user.id
+        other_user_id = request.query_params.get('user_id')
+        room_id = request.query_params.get('room_id')
 
         if room_id:
-            # Nếu có room_id, chỉ lấy các tin nhắn trong phòng chat đó
             messages = Message.objects.filter(room=room_id).order_by('created_at')
         elif other_user_id:
-            # Nếu không có room_id, lấy các tin nhắn 1-1 giữa current_user và other_user
             messages = Message.objects.filter(
                 Q(message_by=current_user_id, message_to=other_user_id) |
                 Q(message_by=other_user_id, message_to=current_user_id)
@@ -80,12 +96,13 @@ class MessageViewSet(viewsets.ModelViewSet):
         else:
             return Response({"error": "user_id hoặc room_id là bắt buộc"}, status=400)
 
-        # Sử dụng serializer để chuyển đổi dữ liệu
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
 
+
 def home(request):
     return render(request, 'home.html')
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -95,19 +112,63 @@ def login_view(request):
             password = form.cleaned_data['password']
 
             # Kiểm tra thông tin đăng nhập
-            try:
-                user = User.objects.get(email=email, password=password)
-                request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
-                user.is_active = True
-                user.save()
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                request.session['current_user_id'] = user.id
                 return redirect('http://127.0.0.1:8000/')
-
-            except User.DoesNotExist:
+            else:
                 messages.error(request, "Sai thông tin đăng nhập.")
     else:
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
+
+
 def logout_view(request):
     logout(request)  # Đăng xuất và xóa session
     return redirect('login')
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_chat_room(request):
+    serializer = ChatRoomSerializer(data=request.data)
+
+    if serializer.is_valid():
+        chat_room = serializer.save(creator=request.user)
+        UserChatRoom.objects.create(user=request.user, room=chat_room)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def user_chat_room_list(request):
+    return Response({"message": "User chat rooms here"})
+
+
+def add_user_to_chat(request):
+    if request.method == 'POST':
+        user_ids = request.POST.getlist('user_ids[]')
+        chat_room_id = request.POST.get('chat_room_id')  # Thêm cách lấy chat_room_id từ request
+        chat_room = UserChatRoom.objects.get(id=chat_room_id)
+
+        for user_id in user_ids:
+            user = User.objects.get(id=user_id)
+            chat_room.users.add(user)  # Thêm người dùng vào phòng chat
+
+        return redirect('chat_room_detail', chat_room_id=chat_room_id)  # Chuyển hướng về chi tiết phòng chat
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+@require_POST
+def add_user(request):
+    if request.method == 'POST':
+        user_ids = request.POST.getlist('user_ids')  # Lấy danh sách ID người dùng đã chọn
+        # Thực hiện logic để thêm người dùng vào nhóm
+        for user_id in user_ids:
+            # Thêm logic để thêm người dùng vào nhóm, ví dụ:
+            # UserChatRoom.objects.create(user_id=user_id, group=group)
+            pass
+        return redirect('chatrooms')  # Chuyển hướng sau khi thêm
+
+    return render(request, 'home.html')  # Nếu không phải POST, render lại trang
