@@ -107,13 +107,10 @@ DATABASES = {
 #         'NAME': 'chat_project_mrii',
 #         'USER': 'chat_project_mrii_user',
 #         'PASSWORD': 'brkFsu41zyDfUoLTHMqTYzFiRfwyptXT',
-<<<<<<< HEAD
-#         'HOST': 'dpg-csf4dmbtq21c738jf29g-a.oregon-postgres.render.com',
-=======
 #         'HOST': 'dpg-csf4dmbtq21c738python manage.py runserver 8001
 # jf29g-a.oregon-postgres.render.com',
->>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
 #     }
+#         'HOST': 'dpg-csf4dmbtq21c738jf29g-a.oregon-postgres.render.com',
 # }
 
 

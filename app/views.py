@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -6,10 +5,8 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 
 from .forms import LoginForm
-=======
 from rest_framework import viewsets
 from .forms import LoginForm, SignupForm
->>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
 from .models import User, ChatRoom, Message, UserChatRoom
 from .serializers import UserSerializer, ChatRoomSerializer, MessageSerializer, UserChatRoomSerializer
 from rest_framework.response import Response
@@ -109,11 +106,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 def home(request):
     return render(request, 'home.html')
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -122,14 +115,12 @@ def login_view(request):
             password = form.cleaned_data['password']
 
             # Kiểm tra thông tin đăng nhập
-<<<<<<< HEAD
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
                 request.session['current_user_id'] = user.id
                 return redirect('http://127.0.0.1:8000/')
             else:
-=======
             try:
                 user = User.objects.get(email=email)
 
@@ -149,7 +140,6 @@ def login_view(request):
                     messages.error(request, "Sai thông tin đăng nhập.")
 
             except User.DoesNotExist:
->>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
                 messages.error(request, "Sai thông tin đăng nhập.")
 
     else:
@@ -163,7 +153,6 @@ def logout_view(request):
     return redirect('login')
 
 
-<<<<<<< HEAD
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_chat_room(request):
@@ -206,8 +195,6 @@ def add_user(request):
         return redirect('chatrooms')  # Chuyển hướng sau khi thêm
 
     return render(request, 'home.html')  # Nếu không phải POST, render lại trang
-=======
-
 
 def signup_view(request):
     if request.method == 'POST':
@@ -256,4 +243,3 @@ def signup_view(request):
         'months': months,
         'years': years
     })
->>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8

@@ -6,12 +6,10 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-<<<<<<< HEAD
 class GroupForm(forms.ModelForm):
     class Meta:
         model = ChatRoom
         fields = ['name']
-=======
 class SignupForm(forms.Form):
     username = forms.CharField(max_length=50, label="Username", required=True)
     first_name = forms.CharField(max_length=30, label="Họ", required=True)
@@ -31,4 +29,3 @@ class SignupForm(forms.Form):
     study_at = forms.CharField(max_length=200, label="Học tại", required=False)
     working_at = forms.CharField(max_length=200, label="Làm việc tại", required=False)
     bio = forms.CharField(max_length=200, label="Tiểu sử", required=False, widget=forms.Textarea)
->>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
