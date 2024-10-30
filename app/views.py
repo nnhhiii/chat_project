@@ -121,29 +121,29 @@ def login_view(request):
                 request.session['current_user_id'] = user.id
                 return redirect('http://127.0.0.1:8000/')
             else:
-            try:
-                user = User.objects.get(email=email)
+                try:
+                    user = User.objects.get(email=email)
 
-                # So sánh mật khẩu trực tiếp
-                if user.password == password:
-                    request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
-                    user.is_active = True
-                    user.save()
-                    return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
-                # Nếu mật khẩu không khớp, sử dụng check_password
-                elif check_password(password, user.password):
-                    request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
-                    user.is_active = True
-                    user.save()
-                    return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
-                else:
+                    # So sánh mật khẩu trực tiếp
+                    if user.password == password:
+                        request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
+                        user.is_active = True
+                        user.save()
+                        return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
+                    # Nếu mật khẩu không khớp, sử dụng check_password
+                    elif check_password(password, user.password):
+                        request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
+                        user.is_active = True
+                        user.save()
+                        return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
+                    else:
+                        messages.error(request, "Sai thông tin đăng nhập.")
+
+                except User.DoesNotExist:
                     messages.error(request, "Sai thông tin đăng nhập.")
 
-            except User.DoesNotExist:
-                messages.error(request, "Sai thông tin đăng nhập.")
-
-    else:
-        form = LoginForm()
+        else:
+            form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
 
