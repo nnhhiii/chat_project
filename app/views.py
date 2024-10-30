@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -5,6 +6,10 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 
 from .forms import LoginForm
+=======
+from rest_framework import viewsets
+from .forms import LoginForm, SignupForm
+>>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
 from .models import User, ChatRoom, Message, UserChatRoom
 from .serializers import UserSerializer, ChatRoomSerializer, MessageSerializer, UserChatRoomSerializer
 from rest_framework.response import Response
@@ -13,6 +18,8 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from datetime import date
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.sessions.models import Session
 from .forms import GroupForm
 from rest_framework.decorators import api_view
@@ -102,8 +109,11 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 def home(request):
     return render(request, 'home.html')
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -112,13 +122,36 @@ def login_view(request):
             password = form.cleaned_data['password']
 
             # Kiểm tra thông tin đăng nhập
+<<<<<<< HEAD
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
                 request.session['current_user_id'] = user.id
                 return redirect('http://127.0.0.1:8000/')
             else:
+=======
+            try:
+                user = User.objects.get(email=email)
+
+                # So sánh mật khẩu trực tiếp
+                if user.password == password:
+                    request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
+                    user.is_active = True
+                    user.save()
+                    return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
+                # Nếu mật khẩu không khớp, sử dụng check_password
+                elif check_password(password, user.password):
+                    request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
+                    user.is_active = True
+                    user.save()
+                    return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
+                else:
+                    messages.error(request, "Sai thông tin đăng nhập.")
+
+            except User.DoesNotExist:
+>>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
                 messages.error(request, "Sai thông tin đăng nhập.")
+
     else:
         form = LoginForm()
 
@@ -130,6 +163,7 @@ def logout_view(request):
     return redirect('login')
 
 
+<<<<<<< HEAD
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_chat_room(request):
@@ -172,3 +206,54 @@ def add_user(request):
         return redirect('chatrooms')  # Chuyển hướng sau khi thêm
 
     return render(request, 'home.html')  # Nếu không phải POST, render lại trang
+=======
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        # Nhận dữ liệu từ form
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        day_of_birth = request.POST.get('day_of_birth')
+        month_of_birth = request.POST.get('month_of_birth')
+        year_of_birth = request.POST.get('year_of_birth')
+        gender = request.POST.get('gender')
+        study_at = request.POST.get('study_at')
+        working_at = request.POST.get('working_at')
+        bio = request.POST.get('bio')
+
+        # Kiểm tra nếu email hoặc username đã tồn tại
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email này đã được sử dụng. Vui lòng nhập email khác.")
+            return redirect('signup')
+        elif User.objects.filter(username=username).exists():
+            messages.error(request, "Tên đăng nhập này đã tồn tại. Vui lòng chọn tên đăng nhập khác.")
+            return redirect('signup')
+
+        # Tạo đối tượng User mới
+        user = User(
+            username=username,
+            email=email,
+            password=make_password(password),  # Mã hóa mật khẩu
+            gender=gender,
+            date_of_birth=f'{year_of_birth}-{month_of_birth}-{day_of_birth}',  # Định dạng ngày
+            study_at=study_at,
+            working_at=working_at,
+            bio=bio
+        )
+        user.save()  # Lưu người dùng vào cơ sở dữ liệu
+        messages.success(request, "Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.")
+        return redirect('login')  # Chuyển hướng đến trang đăng nhập
+
+    # Nếu không phải là POST, trả về form đăng ký
+    days = list(range(1, 32))
+    months = list(range(1, 13))
+    years = list(range(1900, date.today().year + 1))
+
+    return render(request, 'signup.html', {
+        'days': days,
+        'months': months,
+        'years': years
+    })
+>>>>>>> 8885338dfb4cec3d980b36d9e9165771ed4b2fa8
