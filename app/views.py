@@ -39,46 +39,41 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     serializer_class = ChatRoomSerializer
 
 
-class UserChatRoomViewSet(viewsets.ViewSet):
+class UserChatRoomViewSet(viewsets.ModelViewSet):
     queryset = UserChatRoom.objects.all()
     serializer_class = UserChatRoomSerializer
 
-    def list(self, request, user_id=None):
+    @action(detail=False, methods=['get'], url_path='chat-rooms')
+    def get_request(self, request):
+        user_id = request.query_params.get('user_id')
+        room_id = request.query_params.get('room_id')
         if user_id:
-            # Lấy tất cả UserChatRoom cho user_id
-            user_chat_rooms = UserChatRoom.objects.filter(user_id=user_id)
+            chat_rooms = UserChatRoom.objects.filter(user=user_id)
+            rooms = [chat_room.room for chat_room in chat_rooms]
+            serializer = ChatRoomSerializer(rooms, many=True)
+        elif room_id:
+            users_chat_rooms = UserChatRoom.objects.filter(room=room_id)
+            users = [users_chat_room.user for users_chat_room in users_chat_rooms]
+            serializer = UserSerializer(users, many=True)
 
-            # Nếu không có phòng chat nào, trả về thông báo
-            if not user_chat_rooms.exists():
-                return Response({'detail': 'User has not participated in any chat rooms.'}, status=200)
-
-            # Nếu có phòng chat, lấy danh sách phòng
-            chat_rooms = [user_chat_room.room for user_chat_room in user_chat_rooms]
-            serializer = ChatRoomSerializer(chat_rooms, many=True)
-            return Response(serializer.data)
-
-        return Response({'detail': 'User ID not provided.'}, status=400)
+        return Response(serializer.data)
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
     @action(detail=False, methods=['get'], url_path='get-messages')
     def get_messages(self, request):
-        current_user_id = request.user.id  # Lấy người dùng hiện tại từ request
+        current_user_id = request.session.get('current_user_id')  # Lấy người dùng hiện tại từ request
         other_user_id = request.query_params.get('user_id')  # Lấy user_id từ query parameters
         room_id = request.query_params.get('room_id')  # Lấy room_id từ query parameters (nếu có)
 
         if room_id:
-            # Nếu có room_id, chỉ lấy các tin nhắn trong phòng chat đó
             messages = Message.objects.filter(room=room_id).order_by('created_at')
         elif other_user_id:
-            # Nếu không có room_id, lấy các tin nhắn 1-1 giữa current_user và other_user
             messages = Message.objects.filter(
                 Q(message_by=current_user_id, message_to=other_user_id) |
                 Q(message_by=other_user_id, message_to=current_user_id)
             ).order_by('created_at')
-        else:
-            return Response({"error": "user_id hoặc room_id là bắt buộc"}, status=400)
 
         # Sử dụng serializer để chuyển đổi dữ liệu
         serializer = self.get_serializer(messages, many=True)
