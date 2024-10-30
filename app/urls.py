@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import UserChatRoomViewSet, login_view, logout_view
+from .views import UserChatRoomViewSet, login_view, logout_view, signup_view
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -15,5 +15,8 @@ urlpatterns = [
     path('api/user-chat-rooms/<int:user_id>/', UserChatRoomViewSet.as_view({'get': 'list'}), name='get-user-chat-rooms'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('signup/', signup_view, name='signup'),
 
 ]

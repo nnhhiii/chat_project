@@ -91,25 +91,26 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'chat_project',
-#         'USER': 'postgres',
-#         'PASSWORD': '123',
-#         'HOST': 'localhost',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chat_project_mrii',
-        'USER': 'chat_project_mrii_user',
-        'PASSWORD': 'brkFsu41zyDfUoLTHMqTYzFiRfwyptXT',
-        'HOST': 'dpg-csf4dmbtq21c738jf29g-a.oregon-postgres.render.com',
+        'NAME': 'chat_project',
+        'USER': 'postgres',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'chat_project_mrii',
+#         'USER': 'chat_project_mrii_user',
+#         'PASSWORD': 'brkFsu41zyDfUoLTHMqTYzFiRfwyptXT',
+#         'HOST': 'dpg-csf4dmbtq21c738python manage.py runserver 8001
+# jf29g-a.oregon-postgres.render.com',
+#     }
+# }
 
 
 

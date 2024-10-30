@@ -21,6 +21,23 @@
         <a href=""><img src="https://img.icons8.com/?size=256&id=88004&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=14092&format=png"></a>
+         <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'>Đăng xuất</a>
+<div class="modal fade" id="logout-modal">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+            <div class="modal-header">
+                <h5 class="modal-title" style="padding:5px 0 5px 30px">Bạn muốn đăng xuất?</h5>
+            </div>
+            <div class="modal-body" style="padding:0">
+                <form action="{% url 'logout' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Đăng xuất</button>
+                </form>
+                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
     <div class="hienthi">
         <div class="col_left">

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firefly</title>
+  <link rel="icon" href="../img/logo1.png" type="image/x-icon">
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+    }
+    button {
+      font-family: 'Roboto', sans-serif;
+      text-transform: uppercase;
+      outline: 0;
+      background: #6abfd0;
+      width: 100%;
+      border: 0;
+      padding: 15px;
+      color: #FFFFFF;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    button:hover, button:active, button:focus {
+      background: #538c97;
+    }
+    .formngoai {
+      width: 360px;
+      position: relative;
+      z-index: 1;
+      background: #FFFFFF;
+      max-width: 360px;
+      margin: 0 auto;
+      padding: 45px 45px 20px 45px;
+      text-align: center;
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+      border-radius: 2%;
+    }
+    .formInput {
+      font-family: 'Roboto', sans-serif;
+      outline: 0;
+      background: #f2f8ff;
+      width: 100%;
+      border: 0;
+      margin: 0 0 15px;
+      padding: 15px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    a {
+      color: black;
+      text-decoration: none;
+    }
+    .alert {
+      color: red;
+      margin-bottom: 15px;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anta&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia&effect=neon|outline|emboss|shadow-multiple">
+</head>
+<body>
+
+<div style="margin: 0 auto;text-align:center">
+  <div style="color:#b8e0e8;font-family: 'Sofia', sans-serif;font-size:50px;padding:10px 0">Chat</div>
+</div>
+<div class="formngoai">
+
+  <!-- Hiển thị thông báo từ messages -->
+  {% if messages %}
+      {% for message in messages %}
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+              {{ message }}
+          </div>
+      {% endfor %}
+  {% endif %}
+
+  <form action="{% url 'signup' %}" method="post">
+    {% csrf_token %}
+    <input type="text" placeholder="Username" class="formInput" name="username" required>
+    <div style="display: flex; justify-content: space-between;">
+      <input type="text" placeholder="Họ" class="formInput" name="ho" required>
+      <input type="text" placeholder="Tên" class="formInput" name="ten" required>
+    </div>
+    <input type="email" placeholder="Email" class="formInput" name="email" required>
+    <input type="password" placeholder="Mật khẩu" class="formInput" name="password" required>
+
+    <div style="display: flex; justify-content: space-between;">
+      <select name="day_of_birth" class="formInput" required>
+        <option value="">Ngày</option>
+        {% for i in days %}
+          <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+      <select name="month_of_birth" class="formInput" required>
+        <option value="">Tháng</option>
+        {% for i in months %}
+          <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+      <select name="year_of_birth" class="formInput" required>
+        <option value="">Năm</option>
+        {% for i in years %}
+          <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <select name="gender" class="formInput" required>
+      <option value="Nam">Nam</option>
+      <option value="Nữ">Nữ</option>
+      <option value="Khác">Khác</option>
+    </select>
+
+    <input type="text" placeholder="Học tại" class="formInput" name="study_at">
+    <input type="text" placeholder="Làm việc tại" class="formInput" name="working_at">
+
+    <textarea placeholder="Tiểu sử" class="formInput" name="bio"></textarea>
+
+    <button>Đăng ký</button>
+    <p style="margin: 15px 0 0;color: #b3b3b3;font-size: 12px;"><a href="{% url 'login' %}">Bạn đã có tài khoản ư?</a></p>
+  </form>
+</div>
+
+</body>
+</html>
