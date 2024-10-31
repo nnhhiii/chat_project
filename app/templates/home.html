@@ -21,6 +21,23 @@
         <a href=""><img src="https://img.icons8.com/?size=256&id=88004&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=14092&format=png"></a>
+         <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'>Đăng xuất</a>
+<div class="modal fade" id="logout-modal">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+            <div class="modal-header">
+                <h5 class="modal-title" style="padding:5px 0 5px 30px">Bạn muốn đăng xuất?</h5>
+            </div>
+            <div class="modal-body" style="padding:0">
+                <form action="{% url 'logout' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Đăng xuất</button>
+                </form>
+                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
     <div class="hienthi">
         <div class="col_left">
@@ -30,10 +47,19 @@
                     <input class="tim_kiem" name="timkiem">
                     <img src="https://img.icons8.com/search">
                 </form>
+                <button icon="Group_Create_24_Line" data-id="btn_NewGrp_" class="z--btn--v2 btn-tertiary-neutral medium --rounded" title="Tạo nhóm chat" style="margin-left: 8px; display: flex; align-items: center;">
+                    <i class="fa fa-users" style="margin-right: 4px;"></i></button>
             </div>
-
+            <div id="create-group-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4); z-index: 20; width: 300px;">
+                <form method="post" action="{% url 'create_chat_room' %}">
+                    {% csrf_token %}
+                    <h2 style="margin-top: 0; text-align: center;">Tạo Nhóm Chat</h2>
+                    <input type="text" name="name" placeholder="Nhập tên nhóm..." required style="margin-bottom: 10px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button type="submit" style="margin-top: 10px; width: 100%; background-color: #4CAF50; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer;">Tạo nhóm</button>
+                </form>
+                <button onclick="toggleCreateGroupForm()" style="margin-top: 10px; background: none; border: none; color: red; cursor: pointer; display: block; width: 100%; text-align: center;">Đóng</button>
+            </div>
             <div class="chat_users_list"></div>
-
         </div>
     </div>
     <div class="col_right">
@@ -90,19 +116,47 @@
             </form>
         </div>
     </div>
-    
+
     <div id="info">
         <div class="layout_info"><div class="info_1">Chi tiết</div></div>
-        <div style="height:580px;border-bottom: 1px solid lightgray;">
-            <a href="">
-                <div class="mess1">
-                    <div class="ava"></div>
-                    <div class="username"></div><br><br>
-                    <div class="mini_content"></div>
+
+
+<button class="btn-add-user" data-toggle="modal" data-target="#addUserModal">Thêm người dùng</button>
+
+
+    <div class="modal fade" id="addUserModal" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm thành viên</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-            </a>
+                <div class="modal-body">
+                    <input type="text" id="searchUser" placeholder="Tìm kiếm người dùng" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px;">
+                    <form id="addUserForm" action="/add-user/" method="post" onsubmit="return submitForm();">
+                        {% csrf_token %}
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <div class="user-option" style="padding: 10px; border-bottom: 1px solid #eee;">
+                                <input type="checkbox" name="user_ids" value="1"> Người dùng 1
+                            </div>
+                            <div class="user-option" style="padding: 10px; border-bottom: 1px solid #eee;">
+                                <input type="checkbox" name="user_ids" value="2"> Người dùng 2
+                            </div>
+                            <div class="user-option" style="padding: 10px; border-bottom: 1px solid #eee;">
+                                <input type="checkbox" name="user_ids" value="3"> Người dùng 3
+                            </div>
+
+                        </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Thêm vào nhóm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+                    </form>
+            </div>
         </div>
-             
+    </div>
+</div>
+    <div>
             <a class="info_2" style="text-decoration:none;float:left"data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
             <div class="modal fade" id="modal-id">
                 <div class="modal-dialog">
@@ -120,11 +174,20 @@
                 </div>
             </div>
     </div>
+</div>
+    </div>
+<script>
+    $(document).ready(function(){
+        $('.btn-add-user').on('click', function() {
+            $('#addUserModal').modal('show');
+        });
+    });
+</script>
 </body>
 
 <script>
     const currentUserId = "{{ request.session.current_user_id }}";
-    let chatSocket;
+    let chatSocket = null;
     // Hàm để ẩn/hiện khung thông tin
     function myFunction() {
         var colRight = document.querySelector(".col_right");
@@ -187,7 +250,379 @@
             document.getElementById("myIcon").style.display = "none";
         }
     });
+    $('#create-group-btn').click(function() {
+    const groupName = $('#group-name-input').val();
+    const groupAvatar = $('#group-avatar-input')[0].files[0];
+
+    const formData = new FormData();
+    formData.append('name', groupName);
+    if (groupAvatar) {
+        formData.append('avatar', groupAvatar);
+    }
+
+    $.ajax({
+        url: '/api/chat-rooms/',
+        method: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            console.log('Nhóm chat đã được tạo:', data);
+            fetchChatRooms();
+        },
+        error: function(error) {
+            console.error('Lỗi khi tạo nhóm chat:', error);
+        }
+    });
+});
+function openModal() {
+            document.getElementById("addUserModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("addUserModal").style.display = "none";
+        }
+//tao nhom chat
+    function toggleCreateGroupForm() {
+        var form = document.getElementById("create-group-form");
+        var overlay = document.getElementById("overlay");
+        if (form.style.display === "none" || form.style.display === "") {
+            form.style.display = "block";
+            overlay.style.display = "block";
+        } else {
+            form.style.display = "none";
+            overlay.style.display = "none";
+        }
+    }
+</script>
+{#<script src="{%static 'js/list_chat.js'%}"></script>#}
+{#<script src="{%static 'js/message.js'%}"></script>#}
+<script>
+    const imgBaseUrl = '/static/img/';
+let latestMessages = [];  // Mảng lưu trữ thông tin tin nhắn gần nhất
+
+function fetchChatUsers() {
+    $.ajax({
+        url: '/api/users/chat-users/',
+        method: 'GET',
+        success: function(users) {
+            if (users.length > 0) {
+                $.each(users, function (index, user) {
+                    // Gọi hàm lấy tin nhắn gần nhất cho từng user
+                    fetchLatestMessage(user.id, null, function(latestMessage) {
+                        latestMessages.push({
+                            id: user.id,
+                            username: user.username,
+                            avatar: user.avatar,
+                            type: 'user',
+                            latestMessage: latestMessage
+                        });
+                        // Cập nhật giao diện sau khi có tất cả thông tin
+                        updateChatListDisplay();
+                    });
+                });
+            }
+        },
+        error: function(error) {
+            console.error('Error fetching chat users:', error);
+        }
+    });
+}
+
+function fetchChatRooms() {
+    $.ajax({
+        url: `/api/userchatrooms/chat-rooms/?user_id=${currentUserId}`,
+        method: 'GET',
+        success: function (rooms) {
+            if (rooms.length > 0) {
+                $.each(rooms, function (index, room) {
+                    // Gọi hàm lấy tin nhắn gần nhất cho từng room
+                    fetchLatestMessage(null, room.id, function(latestMessage) {
+                        latestMessages.push({
+                            id: room.id,
+                            name: room.name,
+                            avatar: room.avatar,
+                            type: 'room',
+                            latestMessage: latestMessage
+                        });
+                        // Cập nhật giao diện sau khi có tất cả thông tin
+                        updateChatListDisplay();
+                    });
+                });
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching chat rooms:', error);
+        }
+    });
+}
+
+// Hàm lấy tin nhắn gần nhất và gọi callback với thông tin tin nhắn
+function fetchLatestMessage(user_id, room_id, callback) {
+    if (user_id === null && room_id === null) return;
+
+    let url = `/api/messages/get-messages`;
+    if (user_id) {
+        url += `?user_id=${user_id}`;
+    } else if (room_id) {
+        url += `?room_id=${room_id}`;
+    }
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function(messages) {
+            if (messages.length > 0) {
+                let latestMessage = messages[messages.length - 1]; // Lấy tin nhắn gần nhất
+                callback(latestMessage); // Gọi callback với thông tin tin nhắn gần nhất
+            } else {
+                callback(null); // Không có tin nhắn nào
+            }
+        },
+        error: function(error) {
+            console.error('Error fetching latest message:', error);
+            callback(null); // Gọi callback với null khi có lỗi
+        }
+    });
+}
+
+// Cập nhật giao diện hiển thị danh sách chat
+function updateChatListDisplay() {
+    $('.chat_users_list').html('');
+    // Sắp xếp mảng latestMessages theo thời gian gần nhất
+    latestMessages.sort((a, b) => {
+        const aDate = a.latestMessage ? new Date(a.latestMessage.created_at) : 0;
+        const bDate = b.latestMessage ? new Date(b.latestMessage.created_at) : 0;
+        return bDate - aDate; // Sắp xếp giảm dần
+    });
+
+    // Hiển thị lại danh sách người dùng và phòng chat
+    $.each(latestMessages, function(index, item) {
+        let html = '';
+        if (item.type === 'user') {
+            html = `
+            <a onclick="openChat(${item.id}, null)">
+                <div class="mess1" id="chat-user" style="position:relative" data-chat-user-id="${item.id}">
+                    <div class="ava" style="background-image: url('${imgBaseUrl}${item.avatar}'); background-position: center"></div>
+                    <div class="username">${item.username}</div>
+                    <br><br>
+                    <div class="mini_content" style="max-width:200px;">
+                        <span class="latest_message">${item.latestMessage.content}</span>
+                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">${calculateTimeAgo(item.latestMessage.created_at)}</div>
+                    </div>
+                </div>
+            </a>`;
+        } else if (item.type === 'room') {
+            html = `
+            <a onclick="openChat(null, ${item.id})">
+                <div class="mess1" id="chat-room" data-chat-room-id="${item.id}" style="position:relative">
+                    <div class="ava" style="background-image: url('${imgBaseUrl}${item.avatar}');"></div>
+                    <div class="username">${item.name}</div>
+                    <br><br>
+                    <div class="mini_content" style="max-width:200px;">
+                        <span class="latest_message">${item.latestMessage.content}</span>
+                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">${calculateTimeAgo(item.latestMessage.created_at)}</div>
+                    </div>
+                </div>
+            </a>`;
+        }
+        $('.chat_users_list').append(html); // Thêm HTML vào danh sách chat
+    });
+}
+
+
+// Hàm tính toán thời gian đã qua (ví dụ: 1 phút trước, 2 giờ trước)
+function calculateTimeAgo(timestamp) {
+    let timeAgo = new Date(timestamp);
+    let now = new Date();
+    let difference = Math.floor((now - timeAgo) / 1000);  // Tính sự chênh lệch theo giây
+
+    if (difference < 60) {
+        return `${difference} giây trước`;
+    } else if (difference < 3600) {
+        return `${Math.floor(difference / 60)} phút trước`;
+    } else if (difference < 86400) {
+        return `${Math.floor(difference / 3600)} giờ trước`;
+    } else {
+        return `${Math.floor(difference / 86400)} ngày trước`;
+    }
+}
+function openChat(recipientId, roomId) {
+    // Xóa nội dung hiện tại
+    $('.content').html('');
+
+    // Nếu chưa có kết nối, tạo kết nối WebSocket
+    const identifier = roomId ? `rooms_${roomId}` : `users_${recipientId}`;
+    if (chatSocket) {
+        // Chỉ cần gửi một thông điệp để chuyển nhóm
+        chatSocket.send(JSON.stringify({
+            action: 'switch',
+            identifier: identifier
+        }));
+    } else {
+        // Nếu chưa có socket, tạo kết nối WebSocket mới
+        setupWebSocket(identifier, recipientId, roomId, currentUserId);
+    }
+
+
+    loadMessage(roomId, recipientId, currentUserId);
+    console.log('currentUserId là:', currentUserId);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetchChatUsers();  // Gọi API khi trang được tải
+    fetchChatRooms();
+});
+
+function setupWebSocket(identifier, recipientId, roomId, currentUserId) {
+    const ws_url = `ws://${window.location.host}/ws/app/${identifier}/`;
+
+    chatSocket= new WebSocket(ws_url);
+    chatSocket.identifier = identifier;
+    // Nhận tin nhắn mới từ WebSocket
+    chatSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        console.log("Received data:", data);
+        if (data) {
+            displayMessage(data, currentUserId);  // Hàm này sẽ thêm tin nhắn vào giao diện
+        }
+    };
+
+    // Gửi tin nhắn qua WebSocket và API khi form được submit
+    $('#messageForm').off('submit').on('submit', function (event) {
+        event.preventDefault();
+        const content = $('textarea[name="content"]').val();
+        if (content.trim() !== "") {
+            // Gửi tin nhắn qua WebSocket
+            chatSocket.send(JSON.stringify({
+                'content': content,
+                'message_by': currentUserId,
+                'message_type': 'text'
+            }));
+
+            // Dữ liệu để gửi qua API
+            const payload = {
+                'content': content,
+                'message_by': currentUserId,
+                'message_type': 'text'
+            };
+
+            if (roomId) {
+                payload['room'] = roomId;
+                payload['message_to'] = null;
+            } else if (recipientId) {
+                payload['room'] = null;
+                payload['message_to'] = recipientId;
+            }
+
+            // Gửi tin nhắn đến API
+            $.ajax({
+                url: 'api/messages/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: JSON.stringify(payload),
+                success: function (data) {
+                    console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
+                    latestMessages = [];
+                    fetchChatUsers();
+                    fetchChatRooms();
+                },
+                error: function(error) {
+                    console.error("Lỗi khi lưu tin nhắn:", error);
+                }
+            });
+
+            // Xóa nội dung sau khi gửi
+            $('textarea[name="content"]').val('');
+        }
+    });
+
+    chatSocket.onopen = function () {
+        console.log('WebSocket kết nối thành công');
+    };
+
+    chatSocket.onclose = function () {
+        console.error('WebSocket kết nối bị đóng. Đang thử kết nối lại...');
+        setTimeout(function () {
+            location.reload();
+        }, 5000);
+    };
+}
+
+
+// Lấy các tin nhắn cũ qua API
+function loadMessage(roomId = null, recipientId = null, currentUserId) {
+    let apiUrl = '/api/messages/get-messages';
+
+    if (roomId) {
+        apiUrl += `?room_id=${roomId}`;  // Lấy tin nhắn theo phòng
+    } else if (recipientId) {
+        apiUrl += `?user_id=${recipientId}`;  // Lấy tin nhắn 1-1
+    }
+
+    // Gọi API để lấy các tin nhắn cũ
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        success: function (data) {
+            data.forEach(message => {
+                displayMessage(message, currentUserId);
+            });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Lỗi khi tải tin nhắn cũ:', textStatus, errorThrown);
+        }
+    });
+}
+
+function displayMessage(data, currentUserId) {
+    let messageHtml;
+    let messageClass;
+
+    if (data.message_by == currentUserId) {
+        messageClass = 'sent-message';
+    } else {
+        messageClass = 'received-message';
+    }
+
+    switch (data.message_type) {
+        case 'text':
+            messageHtml = '<div class="content-message"><div class=" text-message ' + messageClass + '">' + data.content + '</div></div>';
+            break;
+        case 'image':
+            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><img src="' + data.content + '" alt="Image" /></div></div>';
+            break;
+        case 'video':
+            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><video controls><source src="' + data.content + '" type="video/mp4">Trình duyệt của bạn không hỗ trợ video.</video></div></div>';
+            break;
+        case 'link':
+            messageHtml = '<div class="content-message"><div class=" link-message ' + messageClass + '"><a href="' + data.content + '" target="_blank">' + data.content + '</a></div></div>';
+            break;
+        default:
+            messageHtml = '<div class="content-message"><div class="unknown-message">Tin nhắn không xác định.</div></div>';
+    }
+
+    $('.content').append(messageHtml);
+    $('.content').scrollTop($('.content')[0].scrollHeight);
+}
+
+// Hàm lấy giá trị CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 </script>
-<script src="{%static 'js/list_chat.js'%}"></script>
-<script src="{%static 'js/message.js'%}"></script>

@@ -21,8 +21,8 @@ application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter([
-            path("ws/app/rooms/<str:room_id>/", consumers.ChatConsumer.as_asgi()),  # Sử dụng <str:room_name> để trích xuất tên phòng
-            path("ws/app/users/<str:user_id>/", consumers.ChatConsumer.as_asgi()),
+            path("ws/app/<str:identifier>/", consumers.ChatConsumer.as_asgi()),
         ])
     ),
 })
+

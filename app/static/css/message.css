@@ -327,12 +327,123 @@ body{
     background-color: #EEEEEE;
     border: none;
 }
-.layout_tim_kiem{
+.layout_tim_kiem {
+    display: flex;
+    align-items: center;
+    position: relative;
     left: -10%;
 }
-.layout_tim_kiem > form > img {
-    top:12px;
-    height:1vw;
-    position: absolute;
-    right:13px
+
+.layout_tim_kiem > form {
+    flex: 1;
+    position: relative;
 }
+
+.layout_tim_kiem > form > img {
+    top: 12px;
+    height: 1vw;
+    position: absolute;
+    right: 13px;
+}
+
+.layout_tim_kiem > button {
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.layout_tim_kiem > button:hover {
+    background-color: #f0f0f0;
+}
+
+#info {
+    padding: 15px;
+    font-family: Arial, sans-serif;
+}
+
+.layout_info {
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+.info_1 {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.mess1 {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.mess1 .ava {
+    width: 40px;
+    height: 40px;
+    background-color: gray;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.mess1 .username {
+    font-weight: bold;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.add-user-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.add-user-btn:hover {
+    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+}
+
+.user-list {
+    padding: 10px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.user-item .ava {
+    width: 40px;
+    height: 40px;
+    background-color: gray;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-item .username {
+    flex-grow: 1;
+}
+
+.add-checkbox {
+    margin-left: auto;
+}
+
+
+
+
+

@@ -109,7 +109,7 @@ DATABASES = {
 #         'PASSWORD': 'brkFsu41zyDfUoLTHMqTYzFiRfwyptXT',
 #         'HOST': 'dpg-csf4dmbtq21c738jf29g-a.oregon-postgres.render.com',
 #     }
-# }
+
 
 
 
