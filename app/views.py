@@ -114,6 +114,7 @@ def home(request):
     return render(request, 'home.html')
 
 def login_view(request):
+    host_url = request.build_absolute_uri('/')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -125,7 +126,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 request.session['current_user_id'] = user.id
-                return redirect('http://127.0.0.1:8000/')
+                return redirect(host_url)
             else:
                 try:
                     user = User.objects.get(email=email)
@@ -135,13 +136,13 @@ def login_view(request):
                         request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
                         user.is_active = True
                         user.save()
-                        return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
+                        return redirect(host_url)  # Chuyển hướng đến trang chính
                     # Nếu mật khẩu không khớp, sử dụng check_password
                     elif check_password(password, user.password):
                         request.session['current_user_id'] = user.id  # Lưu ID người dùng vào session
                         user.is_active = True
                         user.save()
-                        return redirect('http://127.0.0.1:8000/')  # Chuyển hướng đến trang chính
+                        return redirect(host_url)  # Chuyển hướng đến trang chính
                     else:
                         messages.error(request, "Sai thông tin đăng nhập.")
                 except User.DoesNotExist:
