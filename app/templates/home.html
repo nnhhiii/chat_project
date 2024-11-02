@@ -8,11 +8,430 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="{%static 'css/message.css'%}">
+{#    <link rel="stylesheet" href="{%static 'css/message.css'%}">#}
 
     <title>chat online</title>
 
 </head>
+<style>
+    body{
+    height: 100%;
+    margin:0
+}
+.col_menu{
+    width: 70px;
+    float: left;
+    height: 100%
+}
+.col_menu > a >img{
+    float: left;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    margin: 10% 17%;
+}
+.col_menu > a > img:hover{
+    cursor: pointer;
+    background-color: lightgray;
+    border-radius: 10px;
+    transform: scale(1.1);
+    transition: 0.3s;
+}
+.hienthi .col_left{
+    width: 375px;
+    border-left:rgb(191, 190, 190) solid 1px;
+    border-right: rgb(191, 190, 190) solid 1px;
+    float: left;
+    height: 720px;
+    position: relative;
+    overflow-y:scroll ;
+}
+.hienthi .col_left > .mess {
+    margin: 30px 20px;
+    float:left;
+    font-size: 20px;
+    font-weight: bold;
+    font-family:'Segoe UI', Tahoma,Verdana, sans-serif;
+}
+.hienthi .col_left > img {
+    width: 30px;
+    height: 30px;
+    margin:30px 25px 15px 0;
+    float:right;
+    cursor: pointer;
+}
+.mess1{
+    width: 100%;
+    height: 80px;
+    float: left;
+    color: black;
+    transition: 0.2s;
+}
+.mess1:hover{
+    background-color: rgb(247, 247, 247);
+}
+.mess1.active {
+    background-color: rgb(229, 228, 228)
+}
+.ava{
+    background-size: cover;
+    border-radius: 50%;
+    padding:30px;
+    margin: 10px 0 0 10px;
+    float: left;
+    cursor: pointer;
+}
+.username{
+    float: left;
+    font-size: 14px;
+    margin: 18px 0 0 10px;
+    font-family:'Segoe UI', Tahoma,Verdana, sans-serif;
+    cursor: pointer;
+    font-weight: 500;
+}
+.mini_content{
+    float: left;
+    font-size: 12px;
+    margin: -5px 0 0 10px;
+    font-family:'Segoe UI', Tahoma,Verdana, sans-serif;
+    color: gray;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow:hidden
+}
+.col_right{
+    position: absolute;
+    right:0;
+    left:445px
+}
+.col_right > .ten{
+    height: 80px;
+    border-bottom: lightgray solid 1px;
+}
+.col_right > .ten > div > .nghe_goi{
+    padding: 15.25px;
+    position: absolute;
+    margin-top: 10px;
+    cursor: pointer;
+    background-size: cover;
+}
+#more_info{
+    right:0;
+    background-image: url('https://img.icons8.com/?size=256&id=24865&format=png');
+}
+#more_info:hover{
+    background-image: url('https://img.icons8.com/?size=256&id=102729&format=png');
+}
+.col_right > .content{
+    height: 590px;
+    overflow-y:scroll ;
+}
+.col_right > .chat_box{
+    position: relative;
+    padding: 10px
+}
+.col_right > .chat_box > form > textarea{
+    height: 45px;
+    line-height: 2.5;
+    border: lightgray solid 1px;
+    border-radius: 30px;
+    padding-left: 55px;
+    padding-right: 130px;
+    max-height: 100px;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    font-size: 17px;
+    font-family:'Segoe UI', Tahoma, Verdana, sans-serif;
+    position: absolute;
+    right: 60px;
+    left: 20px;
+    resize: none;
+    outline:none
+}
+.col_right > .chat_box > form > .icon{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top:8px;
+    padding: 10px;
+    cursor: pointer;
+}
+#smile_icon{
+    left: 27px;
+}
+#microphone_icon{
+    right:120px;
+}
+#attachment_icon{
+    right: 72px;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top:8px;
+    padding: 10px;
+    cursor: pointer;
+}
+#button_heart{
+    right: 10px;
+}
+#button_heart:hover{
+    scale: 1.1;
+    transition: 0.3s;
+}
+.col_right >.chat_box >form > div > label > .nho{
+    width:40px;
+    height:40px;
+    margin:5px
+}
+.col_right >.chat_box >form > #myIcon{
+    width:300px;
+    height:200px;
+    box-shadow:1px 2px 5px lightgray;
+    display: none;
+    position:absolute;
+    bottom:30px;
+    left:50px;
+    border-radius:10px;
+    overflow: auto;
+    padding: 15px 5px;
+}
+@media (max-width:900px){
+    .hienthi .col_left{
+        width: 100px;
+    }
+    .hienthi .col_left > .mess{
+        display: none;
+    }
+    .hienthi .col_left > img{
+        right: 25px;
+    }
+    .hienthi .col_left > a >div>.username, .mini_content{
+        display: none;
+    }
+    .col_right{
+        left: 172px;
+    }
+}
+@media(max-width:800px){
+    .col_menu{
+        display: none;
+    }
+    .hienthi .col_left{
+        height: 670px;
+    }
+    .col_right{
+        top:0;
+        left:100px;
+    }
+    .col_right >.content{
+        height:525px;
+    }
+    .col_right > .ten >.ava{
+        margin-top: 15px;
+        padding:25px
+    }
+    .hienthi .col_left > .mess1 >.ava{
+        padding:25px;
+        margin: 15px;
+    }
+    .username{
+        margin: 30px 0 0 15px;
+        font-size: 17px;
+    }
+}
+#info{
+    display:none;
+    width:20%;
+    position:absolute;
+    right:0;
+    border-left:  1px solid lightgray;
+}
+.layout_info{
+    min-width:200px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding:20px;
+    font-size: 25px;
+    border-bottom: 1px solid lightgray;
+}
+.info_2{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    padding:22px;
+    color: #ED4956;
+    cursor: pointer;
+    float: left;
+    width: 100%;
+}
+.content-message{
+    width:100%;
+    float:left;
+    position: relative;
+    margin-bottom: 15px;
+}
+.image-message{
+    width:350px;
+    margin:2px 2% 2px 50px;
+    float:right;
+    border-radius: 20px 20px 2px 20px;
+}
+.text-message{
+    max-width:60%;
+    overflow-wrap:break-word;
+    padding:10px;
+    background: lightgray;
+    margin:2px 2%;
+    font-size:16.5px
+}
+.sent-message{
+    border-radius:18px 18px 2px 18px;
+    float:right;
+}
+.received-message{
+    float:left;
+    border-radius:18px 18px 18px 2px;
+}
+.link-message a {
+    max-width:60%;
+    overflow-wrap:break-word;
+    padding:10px;
+    background: lightgray;
+    margin:2px 2% 2px 50px;
+    font-size:16.5px;
+    color: blue;
+    text-decoration: underline;
+}
+.message_time{
+    float:right;
+    color:gray;
+    margin-top:15px;
+    font-size:12px
+}
+#myIcon > button{
+    width:50px;
+    background: none;
+    font-size: 28px;
+    border:none
+}
+.layout_url{
+    width:310px; float:right; background:lightgray;border-radius:20px 20px 2px 20px;margin: 10px 2% 10px 50px
+}
+.avt_url{
+    width:32px;
+    height:32px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    float: left;
+    margin:10px;
+}
+.user_url{
+    font-size:15px; margin:17px 7px 15px 0;color:black;font-weight:500;float:left
+}
+.content_url{
+    float:left;margin:20px 7px;font-size:12px;color:black
+}
+.layout_tim_kiem{
+    width:60%;
+    float: right;
+    margin-top: 30px;
+    position: relative;
+    display: flex;
+}
+.layout_tim_kiem > form {
+    position: relative;
+}
+.layout_tim_kiem >form > input{
+    width:100%;
+    height: 40px;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 20px;
+    background-color: #EEEEEE;
+    border: none;
+}
+.layout_tim_kiem > form > img {
+    top: 12px;
+    height: 1vw;
+    position: absolute;
+    right: 13px;
+}
+
+.layout_tim_kiem > a >  button {
+    padding: 8px 12px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 40px;
+    margin-left: 8px;
+    margin-right: 15px;
+}
+
+.layout_tim_kiem > a > button:hover {
+    background-color: #f0f0f0;
+}
+
+.mess1 .ava {
+    width: 40px;
+    height: 40px;
+    background-color: gray;
+    background-position: center;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.mess1 .username {
+    font-weight: bold;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.add-user-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.add-user-btn:hover {
+    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+}
+
+.user-list {
+    padding: 10px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.user-item .ava {
+    width: 40px;
+    height: 40px;
+    background-color: gray;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-item .username {
+    flex-grow: 1;
+}
+
+.add-checkbox {
+    margin-left: auto;
+}
+</style>
 <body>
     <div class="col_menu">
         <a href=""><img src="https://img.icons8.com/?size=256&id=Gc9qmZNN9yFN&format=png" style="margin-top: 100px;"></a>
@@ -21,7 +440,7 @@
         <a href=""><img src="https://img.icons8.com/?size=256&id=88004&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=14092&format=png"></a>
-      <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'>Đăng xuất</a>
+         <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'>Đăng xuất</a>
 <div class="modal fade" id="logout-modal">
     <div class="modal-dialog">
         <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
@@ -47,20 +466,86 @@
                     <input class="tim_kiem" name="timkiem">
                     <img src="https://img.icons8.com/search">
                 </form>
+                <a data-toggle="modal" href='#creatGroupChat' class="theAOpenModal" title="Tạo nhóm chat" >
+                    <button><i class="fa-solid fa-user-plus"></i></button></a>
+
             </div>
+{#            <div id="create-group-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4); z-index: 20; width: 300px;">#}
+{#                <form method="post" action="{% url 'create_chat_room' %}">#}
+{#                    {% csrf_token %}#}
+{#                    <h2 style="margin-top: 0; text-align: center;">Tạo Nhóm Chat</h2>#}
+{#                    <input type="text" name="name" placeholder="Nhập tên nhóm..." required style="margin-bottom: 10px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">#}
+{#                    <button type="submit" style="margin-top: 10px; width: 100%; background-color: #4CAF50; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer;">Tạo nhóm</button>#}
+{#                </form>#}
+{#                <button onclick="toggleCreateGroupForm()" style="margin-top: 10px; background: none; border: none; color: red; cursor: pointer; display: block; width: 100%; text-align: center;">Đóng</button>#}
+{#            </div>#}
 
+            <div class="modal fade" id="creatGroupChat">
+                <div class="modal-dialog">
+                    <form action="" enctype="multipart/form-data" method="post">
+                        <div class="modal-content" style="width:480px;height:520px; border-radius:15px;margin-top:10vh">
+                            <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                                <h5 class="modal-title" style="position:absolute;left:32%;text-align:center;">Tạo nhóm</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+                            </div>
+                            <div class="modal-body" style="padding:0">
+                                <!-- Group's image -->
+                                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;">
+                                <label for="fileInput" style="cursor: pointer; margin-left: 30px; margin-top:15px; float:left ">
+                                    <i class="fa-solid fa-camera" style="scale:2"></i>
+                                </label>
+                                <!-- Group's name -->
+                                <input id="groupName" placeholder="Nhập tên nhóm"
+                                           style="width:82%;height: 40px;outline: none;border: none;border-bottom: 1px solid #DBDBDB; margin-right: 10px; float: right">
+                                <!-- Search -->
+                                <form enctype="multipart/form-data" method="post">
+                                    <i style="top:65px;position: absolute;left:25px" class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="searchUser" placeholder="Nhập tên hoặc email"
+                                           style="width: 95%;outline: none;padding: 10px 10px 10px 45px; border: 1px solid #ccc; border-radius: 15px; margin: 10px;">
+                                </form>
+
+                                <!-- Show users -->
+                                <div class="showUsers" style="height: 270px; overflow:auto">
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary share_button">Tạo nhóm</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="chat_users_list"></div>
-
         </div>
     </div>
     <div class="col_right">
         <div class="ten">
-            <a href="" style="color:black">
-            <div class="ava"style="padding:27px"></div>
-            <div class="username"></div>
-            </a>
-            <br><br>
-            <div class="mini_content"></div>
+            <div id="userInfo"></div>
             <div style="position: absolute; right:20px; top:17px">
                 <div class="nghe_goi" id="more_info" onclick="myFunction()"></div>
             </div>
@@ -108,42 +593,92 @@
         </div>
     </div>
 
-    <div id="info">
+    <div id=info>
         <div class="layout_info"><div class="info_1">Chi tiết</div></div>
         <div style="height:580px;border-bottom: 1px solid lightgray;">
-            <a href="">
-                <div class="mess1">
-                    <div class="ava"></div>
-                    <div class="username"></div><br><br>
-                    <div class="mini_content"></div>
-                </div>
+
+            <!-- js fetchInfo thông tin user or room -->
+            <div class= "layout_info1"></div>
+
+            <!-- modal add user -->
+            <a data-toggle="modal" id="btnAddUser" href='#addUserModal' style="display:none;color:black" class="theAOpenModal">
+                <div class="mess1">Thêm người dùng <i class="fa-solid fa-user-plus"></i></div>
             </a>
+            <div class="modal fade" id="addUserModal">
+                <div class="modal-dialog">
+                    <form action="" enctype="multipart/form-data" method="post">
+                        <div class="modal-content" style="width:480px;height:420px; border-radius:15px;margin-top:20vh">
+                            <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                                <h5 class="modal-title" style="position:absolute;left:32%;text-align:center;">Thêm người dùng</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+                            </div>
+                            <div class="modal-body" style="padding:0;overflow:auto">
+                                <!-- Search -->
+                                <form enctype="multipart/form-data" method="post">
+                                    <i style="top:12px;position: absolute;left:13px" class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="searchUser" placeholder="Nhập tên hoặc email"
+                                           style="width:100%;height: 40px;outline: none;padding-left: 45px;border: none;border-bottom: 1px solid #DBDBDB;">
+                                </form>
+
+                                <!-- Show users -->
+                                <div class="showUsers">
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+
+                                    <label for="mess" class="mess1">
+                                        <div class="ava"></div>
+                                        <div class="username">username</div><br><br>
+                                        <div class="mini_content">email</div>
+                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary share_button">Thêm người dùng</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
-            <a class="info_2" style="text-decoration:none;float:left"data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
-            <div class="modal fade" id="modal-id">
-                <div class="modal-dialog">
-                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-                        <div class="modal-header">
-                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
-                        </div>
-                        <div class="modal-body" style="padding:0">
-                        <form action="" method="post" enctype="multipart/form-data">
-                            <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
-                        </form>
-                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
-                        </div>
+
+        <a class="info_2" style="text-decoration:none;float:left"data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
+        <div class="modal fade" id="modal-id">
+            <div class="modal-dialog">
+                <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
+                    </div>
+                    <div class="modal-body" style="padding:0">
+                    <form method="post" enctype="multipart/form-data">
+                        <input type= "hidden" name="message_to1">
+                        <input type="hidden" name="message_by1" >
+                        <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
+                    </form>
+                        <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 </body>
 
-{#<script src="{%static 'js/message.js'%}"></script>#}
-{#<script src="{%static 'js/chat_users.js'%}"></script>#}
-
 <script>
-    var currentUserId = "{{ request.session.current_user_id }}";
+    const currentUserId = "{{ request.session.current_user_id }}";
     // Hàm để ẩn/hiện khung thông tin
     function myFunction() {
         var colRight = document.querySelector(".col_right");
@@ -206,32 +741,76 @@
             document.getElementById("myIcon").style.display = "none";
         }
     });
+    $('#create-group-btn').click(function() {
+    const groupName = $('#group-name-input').val();
+    const groupAvatar = $('#group-avatar-input')[0].files[0];
 
+    const formData = new FormData();
+    formData.append('name', groupName);
+    if (groupAvatar) {
+        formData.append('avatar', groupAvatar);
+    }
 
+    $.ajax({
+        url: '/api/chat-rooms/',
+        method: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            console.log('Nhóm chat đã được tạo:', data);
+            fetchChatRooms();
+        },
+        error: function(error) {
+            console.error('Lỗi khi tạo nhóm chat:', error);
+        }
+    });
+});
+function openModal() {
+            document.getElementById("addUserModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("addUserModal").style.display = "none";
+        }
+//tao nhom chat
+    function toggleCreateGroupForm() {
+        var form = document.getElementById("create-group-form");
+        var overlay = document.getElementById("overlay");
+        if (form.style.display === "none" || form.style.display === "") {
+            form.style.display = "block";
+            overlay.style.display = "block";
+        } else {
+            form.style.display = "none";
+            overlay.style.display = "none";
+        }
+    }
+</script>
+{#<script src="{%static 'js/list_chat.js'%}"></script>#}
+{#<script src="{%static 'js/message.js'%}"></script>#}
+<script>
     const imgBaseUrl = '/static/img/';
+    let latestMessages = [];  // Mảng lưu trữ thông tin tin nhắn gần nhất
+
 function fetchChatUsers() {
-    // Gọi API lấy danh sách người dùng đã chat
     $.ajax({
         url: '/api/users/chat-users/',
         method: 'GET',
         success: function(users) {
             if (users.length > 0) {
-                // Duyệt qua từng user để hiển thị
                 $.each(users, function (index, user) {
-                    let userHTML = `
-                    <a onclick="openChat(${user.id}, null)">
-                        <div class="mess1" id="chat-user" style="position:relative" data-chat-user-id="${user.id}">
-                            <div class="ava" style="background-image: url('${imgBaseUrl}${user.avatar}'); background-position: center"></div>
-                            <div class="username">${user.username}</div>
-                            <br><br>
-                            <div class="mini_content" style="max-width:200px;">
-                                <span class="latest_message">Đang tải...</span>
-                                <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">Đang tải...</div>
-                            </div>
-                        </div>
-                    </a>`;
-                    $('.chat_users_list').append(userHTML);
-                    fetchLatestMessage(user.id, null);
+                    // Gọi hàm lấy tin nhắn gần nhất cho từng user
+                    fetchLatestMessage(user.id, null, function(latestMessage) {
+                        latestMessages.push({
+                            id: user.id,
+                            username: user.username,
+                            avatar: user.avatar,
+                            type: 'user',
+                            latestMessage: latestMessage
+                        });
+                        // Cập nhật giao diện sau khi có tất cả thông tin
+                        updateChatListDisplay();
+                    });
                 });
             }
         },
@@ -240,28 +819,26 @@ function fetchChatUsers() {
         }
     });
 }
+
 function fetchChatRooms() {
     $.ajax({
-        url: `/api/user-chat-rooms/${currentUserId}/`,
+        url: `/api/userchatrooms/chat-rooms/?user_id=${currentUserId}`,
         method: 'GET',
         success: function (rooms) {
             if (rooms.length > 0) {
-                // Hiển thị các phòng chat
                 $.each(rooms, function (index, room) {
-                    let roomHTML = `
-                                <a onclick="openChat(null, ${room.id})">
-                                    <div class="mess1" id="chat-room" data-chat-room-id="${room.id}" style="position:relative">
-                                        <div class="ava" style="background-image: url('${imgBaseUrl}${room.avatar}'   );"></div>
-                                        <div class="username">${room.room_name}</div>
-                                        <br><br>
-                                        <div class="mini_content" style="max-width:200px;">
-                                            <span class="latest_message">Đang tải...</span>
-                                            <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">Đang tải...</div>
-                                        </div>
-                                    </div>
-                                </a>`;
-                    $('.chat_users_list').append(roomHTML);
-                    fetchLatestMessage(null, room.id);
+                    // Gọi hàm lấy tin nhắn gần nhất cho từng room
+                    fetchLatestMessage(null, room.id, function(latestMessage) {
+                        latestMessages.push({
+                            id: room.id,
+                            name: room.name,
+                            avatar: room.avatar,
+                            type: 'room',
+                            latestMessage: latestMessage
+                        });
+                        // Cập nhật giao diện sau khi có tất cả thông tin
+                        updateChatListDisplay();
+                    });
                 });
             }
         },
@@ -270,8 +847,9 @@ function fetchChatRooms() {
         }
     });
 }
-// Hàm lấy tin nhắn gần nhất của một user
-function fetchLatestMessage(user_id, room_id) {
+
+// Hàm lấy tin nhắn gần nhất và gọi callback với thông tin tin nhắn
+function fetchLatestMessage(user_id, room_id, callback) {
     if (user_id === null && room_id === null) return;
 
     let url = `/api/messages/get-messages`;
@@ -285,29 +863,66 @@ function fetchLatestMessage(user_id, room_id) {
         url: url,
         method: 'GET',
         success: function(messages) {
-            console.log(messages);
             if (messages.length > 0) {
-                let latestMessage = messages[messages.length - 1];  // Lấy tin nhắn gần nhất
-                let miniContent = user_id !== null ?
-                    $(`[data-chat-user-id="${user_id}"] .mini_content .latest_message`) :
-                    $(`[data-chat-room-id="${room_id}"] .mini_content .latest_message`);
-
-                let timeDescription = user_id !== null ?
-                    $(`[data-chat-user-id="${user_id}"] .mini_content .time_description`) :
-                    $(`[data-chat-room-id="${room_id}"] .mini_content .time_description`);
-
-                miniContent.text(latestMessage.content);  // Nội dung tin nhắn
-                timeDescription.text(calculateTimeAgo(latestMessage.created_at));  // Tính toán thời gian đã qua
+                let latestMessage = messages[messages.length - 1]; // Lấy tin nhắn gần nhất
+                callback(latestMessage); // Gọi callback với thông tin tin nhắn gần nhất
+            } else {
+                callback(null); // Không có tin nhắn nào
             }
         },
         error: function(error) {
             console.error('Error fetching latest message:', error);
+            callback(null); // Gọi callback với null khi có lỗi
         }
     });
 }
 
+// Cập nhật giao diện hiển thị danh sách chat
+function updateChatListDisplay() {
+    $('.chat_users_list').html('');
+    // Sắp xếp mảng latestMessages theo thời gian gần nhất
+    latestMessages.sort((a, b) => {
+        const aDate = a.latestMessage ? new Date(a.latestMessage.created_at) : 0;
+        const bDate = b.latestMessage ? new Date(b.latestMessage.created_at) : 0;
+        return bDate - aDate; // Sắp xếp giảm dần
+    });
 
-// Hàm tính toán thời gian đã qua (ví dụ: 1 phút trước, 2 giờ trước)
+    // Hiển thị lại danh sách người dùng và phòng chat
+    $.each(latestMessages, function(index, item) {
+        let html = '';
+        if (item.type === 'user') {
+            html = `
+            <a onclick="openChat(${item.id}, null)">
+                <div class="mess1" id="chat-user" style="position:relative" data-chat-user-id="${item.id}">
+                    <div class="ava" style="background-image: url('${imgBaseUrl}${item.avatar}'); background-position: center"></div>
+                    <div class="username">${item.username}</div>
+                    <br><br>
+                    <div class="mini_content" style="max-width:200px;">
+                        <span class="latest_message">${item.latestMessage.content}</span>
+                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">${calculateTimeAgo(item.latestMessage.created_at)}</div>
+                    </div>
+                </div>
+            </a>`;
+        } else if (item.type === 'room') {
+            html = `
+            <a onclick="openChat(null, ${item.id})">
+                <div class="mess1" id="chat-room" data-chat-room-id="${item.id}" style="position:relative">
+                    <div class="ava" style="background-image: url('${imgBaseUrl}${item.avatar}');"></div>
+                    <div class="username">${item.name}</div>
+                    <br><br>
+                    <div class="mini_content" style="max-width:200px;">
+                        <span class="latest_message">${item.latestMessage.content}</span>
+                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">${calculateTimeAgo(item.latestMessage.created_at)}</div>
+                    </div>
+                </div>
+            </a>`;
+        }
+        $('.chat_users_list').append(html); // Thêm HTML vào danh sách chat
+    });
+}
+
+
+// Hàm tính toán thời gian đã qua
 function calculateTimeAgo(timestamp) {
     let timeAgo = new Date(timestamp);
     let now = new Date();
@@ -323,59 +938,145 @@ function calculateTimeAgo(timestamp) {
         return `${Math.floor(difference / 86400)} ngày trước`;
     }
 }
-function openChat(userId, roomId) {
-    if (userId) {
-        // Thay đổi URL mà không tải lại trang
-        history.pushState({}, '', `/messages/user/${userId}`);
-    } else if (roomId) {
-        history.pushState({}, '', `/messages/room/${roomId}`);
-    }
-    showMessages(userId, roomId);
-}
-
-// Hàm để hiển thị tin nhắn khi nhấn vào user
-function showMessages(recipientId = null, roomId = null) {
-    // Xóa nội dung hiện tại
-    $('.content').html('');
-
-    if (roomId) {
-        setupWebSocket(roomId, null, currentUserId);
-        loadMessage(roomId, null, currentUserId);
-    } else if (recipientId) {
-        setupWebSocket(null, recipientId, currentUserId);
-        loadMessage(null, recipientId, currentUserId);
-    }
-}
-
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchChatUsers();  // Gọi API khi trang được tải
-    fetchChatRooms()
+    fetchChatRooms();
 });
-
-function setupWebSocket(roomId = null, recipientId = null, currentUserId = null) {
-    let ws_url = 'ws://' + window.location.host + '/ws/app/';
+const userInfo = {};
+function fetchInfo(recipientId = null, roomId = null, callback) {
+    let apiUrl = '/api';
 
     if (roomId) {
-        ws_url += `rooms/${roomId}/`;  // WebSocket kết nối theo phòng
+        apiUrl += `/chatrooms/${roomId}`;
     } else if (recipientId) {
-        ws_url += `users/${recipientId}/`;  // WebSocket kết nối theo người dùng
+        apiUrl += `/users/${recipientId}`;
     }
 
-    const chatSocket = new WebSocket(ws_url);
+    // Gọi API để lấy thông tin người dùng hoặc phòng chat
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        success: function (data) {
+            // Lưu thông tin vào userInfo để dùng lại khi cần
+            if (recipientId) {
+                userInfo[recipientId] = data;
+            } else if (roomId) {
+                userInfo[roomId] = data;
+            }
+
+            // Gọi callback nếu có
+            if (callback) {
+                callback();
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Lỗi khi lấy thông tin:', textStatus, errorThrown);
+        }
+    });
+}
 
 
-    // Gửi tin nhắn qua WebSocket và API khi form được submit
+let chatSocket = null;
+function openChat(recipientId, roomId) {
+    $('.content').html('');
+    const identifier = roomId ? `rooms_${roomId}` : `users_${recipientId}`;
+
+    // Hiển thị nút thêm người dùng nếu là phòng chat
+    if (roomId) {
+        document.getElementById("btnAddUser").style.display = "block";
+    }
+
+    // Kiểm tra và chuyển kênh nếu đã có socket
+    if (chatSocket) {
+        if (chatSocket.identifier !== identifier) {
+            chatSocket.send(JSON.stringify({
+                command: 'switch',
+                identifier: identifier
+            }));
+            chatSocket.identifier = identifier;
+        }
+    } else {
+        setupWebSocket(identifier, currentUserId);
+    }
+
+    // Gọi fetchInfo trước để lấy thông tin, sau đó cập nhật giao diện và tải tin nhắn
+    fetchInfo(recipientId, roomId, function() {
+        // Cập nhật giao diện với thông tin của người dùng hoặc phòng chat
+        const data = userInfo[recipientId] || userInfo[roomId];
+        if (data) {
+            const displayUsername = data.username ? data.username : data.name;
+            const displayEmail = data.email ? data.email : '';
+            const html1 = `
+                <a href="" style="color:black">
+                    <div class="ava" style="padding:27px;background-image: url('${imgBaseUrl}${data.avatar}');background-position: center;"></div>
+                    <div class="username">${displayUsername}</div>
+                </a><br><br>
+                <div class="mini_content">Đang hoạt động</div>`;
+
+            const html = `
+                <a href="" style="color:black">
+                    <div class="mess1">
+                        <div class="ava" style="background-image: url('${imgBaseUrl}${data.avatar}');"></div>
+                        <div class="username">${displayUsername}</div><br><br>
+                        <div class="mini_content">${displayEmail}</div>
+                    </div>
+                </a>`;
+
+            $('#userInfo').html(html1);
+            $('.layout_info1').html(html);
+        }
+
+        // Sau khi lấy thông tin xong, tải tin nhắn
+        loadMessage(roomId, recipientId, currentUserId);
+    });
+
+    setupMessageForm(recipientId, roomId, currentUserId);
+}
+
+
+function setupWebSocket(identifier, currentUserId) {
+    const ws_url = `ws://${window.location.host}/ws/app/${identifier}/`;
+
+    chatSocket = new WebSocket(ws_url);
+    chatSocket.identifier = identifier;
+
+    // Nhận tin nhắn mới từ WebSocket
+    chatSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        console.log("Received data:", data);
+        if (data) {
+            displayMessage(data, currentUserId);
+        }
+    };
+
+    chatSocket.onopen = function () {
+        console.log('WebSocket kết nối thành công');
+    };
+
+    chatSocket.onclose = function () {
+        console.error('WebSocket kết nối bị đóng. Đang thử kết nối lại...');
+        setTimeout(function () {
+            location.reload();
+        }, 5000);
+    };
+}
+
+function setupMessageForm(recipientId, roomId, currentUserId) {
     $('#messageForm').off('submit').on('submit', function (event) {
         event.preventDefault();
-        const message = $('textarea[name="content"]').val();
-        if (message.trim() !== "") {
+        const content = $('textarea[name="content"]').val();
+        if (content.trim() !== "") {
             // Gửi tin nhắn qua WebSocket
-            chatSocket.send(JSON.stringify({'message': message}));
+            chatSocket.send(JSON.stringify({
+                'content': content,
+                'message_by': currentUserId,
+                'message_type': 'text'
+            }));
 
-            // Dữ liệu để gửi qua API
+            // Dữ liệu gửi qua API
             const payload = {
-                'content': message,
+                'content': content,
                 'message_by': currentUserId,
                 'message_type': 'text'
             };
@@ -388,87 +1089,100 @@ function setupWebSocket(roomId = null, recipientId = null, currentUserId = null)
                 payload['message_to'] = recipientId;
             }
 
-            // Gửi tin nhắn đến API để lưu vào DB
-            addMessage(payload);
+            // Gửi tin nhắn đến API
+            $.ajax({
+                url: 'api/messages/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: JSON.stringify(payload),
+                success: function (data) {
+                    console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
+                    latestMessages = [];
+                    fetchChatUsers();
+                    fetchChatRooms();
+                },
+                error: function(error) {
+                    console.error("Lỗi khi lưu tin nhắn:", error);
+                }
+            });
 
             // Xóa nội dung sau khi gửi
             $('textarea[name="content"]').val('');
         }
     });
-
-    // Kết nối WebSocket thành công, tải tin nhắn cũ
-    chatSocket.onopen = function () {
-        console.log('WebSocket kết nối thành công');
-    };
-
-    // Xử lý khi WebSocket bị ngắt
-    chatSocket.onclose = function () {
-        console.error('WebSocket kết nối bị đóng. Đang thử kết nối lại...');
-        reconnectWebSocket();
-    };
-}
-
-// Hàm thêm tin nhắn vào API
-function addMessage(payload) {
-    $.ajax({
-        url: 'http://127.0.0.1:8000/api/messages/',
-        type: 'POST',
-        contentType: 'application/json',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        data: JSON.stringify(payload),
-        success: function (data) {
-            console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
-            displayMessage(data, payload.message_by);
-        },
-        error: function(xhr, status, error) {
-            console.error("Lỗi khi lưu tin nhắn:", error);
-            console.log("data status:", xhr.status);       // Mã lỗi HTTP
-            console.log("data text:", xhr.dataText);   // Nội dung chi tiết của phản hồi từ server
-        }
-    });
 }
 
 // Lấy các tin nhắn cũ qua API
-function loadMessage(roomId = null, recipientId = null, currentUserId) {
+async function loadMessage(roomId = null, recipientId = null, currentUserId) {
     let apiUrl = '/api/messages/get-messages';
 
     if (roomId) {
-        apiUrl += `?room_id=${roomId}`;  // Lấy tin nhắn theo phòng
+        apiUrl += `?room_id=${roomId}`;
     } else if (recipientId) {
-        apiUrl += `?user_id=${recipientId}`;  // Lấy tin nhắn 1-1
+        apiUrl += `?user_id=${recipientId}`;
     }
 
-    // Gọi API để lấy các tin nhắn cũ
-    $.ajax({
-        url: apiUrl,
-        type: 'GET',
-        success: function (data) {
-            data.forEach(message => {
+    try {
+        const response = await $.ajax({
+            url: apiUrl,
+            type: 'GET',
+        });
+        const recentMessages = response.slice(-20);
+        for (const message of recentMessages) {
+            const messageById = Number(message.message_by);
+            const currentUserIdNumber = Number(currentUserId);
+
+            if (messageById !== currentUserIdNumber) {
+                await new Promise((resolve) => {
+                    fetchInfo(message.message_by, null, () => {
+                        const user = userInfo[message.message_by];
+                        if (user) {
+                            message.avatar = user.avatar;
+                            message.username = user.username;
+                        }
+                        displayMessage(message, currentUserId);
+                        resolve();
+                    });
+                });
+            } else {
                 displayMessage(message, currentUserId);
-            });
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.error('Lỗi khi tải tin nhắn cũ:', textStatus, errorThrown);
+            }
         }
-    });
+    } catch (error) {
+        console.error('Lỗi khi tải tin nhắn cũ:', error);
+    }
 }
 
+
+
+
 function displayMessage(data, currentUserId) {
+    const imgBaseUrl = '/static/img/';
     let messageHtml;
     let messageClass;
+    const messageById = Number(data.message_by);
+    const currentUserIdNumber = Number(currentUserId);
 
-    if (data.message_by == currentUserId) {
+    if (messageById === currentUserIdNumber) {
         messageClass = 'sent-message';
     } else {
         messageClass = 'received-message';
     }
-    console.log(currentUserId)
     switch (data.message_type) {
         case 'text':
-            messageHtml = '<div class="content-message"><div class=" text-message ' + messageClass + '">' + data.content + '</div></div>';
-            break;
+            // Chỉ hiển thị avatar nếu không phải là tin nhắn của currentUserId
+            if (messageById !== currentUserIdNumber) {
+                messageHtml = '<div class="content-message">' +
+                    '<div class="ava" style="width: 25px;height:25px;margin-top: 25px;padding:0;background-image: url(' + imgBaseUrl + data.avatar + '); background-position: center"></div>' +
+                    '<div class="mini_content" style="position: absolute;left: 45px;top: -10px;">' + data.username + '</div>' +
+                    '<div class="text-message ' + messageClass + '">' + data.content + '</div></div>';
+            }else{
+                messageHtml = '<div class="content-message"><div class="text-message ' + messageClass + '">' + data.content + '</div></div>';
+            }
+        break;
         case 'image':
             messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><img src="' + data.content + '" alt="Image" /></div></div>';
             break;
@@ -479,7 +1193,7 @@ function displayMessage(data, currentUserId) {
             messageHtml = '<div class="content-message"><div class=" link-message ' + messageClass + '"><a href="' + data.content + '" target="_blank">' + data.content + '</a></div></div>';
             break;
         default:
-            messageHtml = '<div class="content-message"><div class="unknown-message">Tin nhắn không xác định.</div></div>';
+            messageHtml = '<div class="content-message"><div class="unknown-message"></div></div>';
     }
 
     $('.content').append(messageHtml);
@@ -501,12 +1215,5 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-// Thử kết nối lại WebSocket
-    function reconnectWebSocket() {
-        setTimeout(function () {
-            location.reload();
-        }, 5000);
-    }
 
 </script>
