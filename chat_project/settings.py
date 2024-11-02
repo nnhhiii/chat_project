@@ -157,3 +157,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Cấu hình URL đăng nhập và URL chuyển hướng
+LOGIN_URL = '/login/'  # Đường dẫn đến trang đăng nhập của bạn
+LOGIN_REDIRECT_URL = '/home'  # Đường dẫn đến trang chính sau khi đăng nhập

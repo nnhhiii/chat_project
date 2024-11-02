@@ -37,3 +37,4 @@ class Message(models.Model):
     message_type = models.CharField(max_length=10, choices=[('text', 'Text'), ('image', 'Image'), ('video', 'Video')])
     created_at = models.DateTimeField(auto_now_add=True)
     read_status = models.BooleanField(default=False)
+

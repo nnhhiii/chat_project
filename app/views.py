@@ -1,5 +1,6 @@
 from rest_framework import viewsets
-from .forms import LoginForm, SignupForm
+
+from .forms import LoginForm
 from .models import User, ChatRoom, Message, UserChatRoom
 from .serializers import UserSerializer, ChatRoomSerializer, MessageSerializer, UserChatRoomSerializer
 from rest_framework.response import Response
@@ -8,8 +9,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from datetime import date
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
 
 
@@ -85,8 +85,10 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
 
+@login_required
 def home(request):
     return render(request, 'home.html')
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -123,7 +125,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)  # Đăng xuất và xóa session
     return redirect('login')
-
 
 
 
