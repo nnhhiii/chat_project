@@ -1,0 +1,264 @@
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+<style>
+  .bia {
+    margin: 11vh 10% 0 10%;
+    height: 34vw;
+    width: 80%
+  }
+
+  .bia>.bia1 {
+    float: right;
+    width: 72%;
+    background-size: cover;
+    background-position: center;
+    border-radius: 0 10px 10px 0;
+    height: 32vw
+  }
+
+  .bia>.khungcanhan {
+    box-shadow: -10px 0px 10px 1px #EEE;
+    float: left;
+    height: 32vw;
+    width: 28%;
+    border-radius: 10px 0 0 10px;
+    position: relative;
+  }
+
+  .bia>.khungcanhan>.canhan1 {
+    height: 15vh;
+    position: relative;
+    padding: 9vh 0 2vh 0
+  }
+
+  .bia>.khungcanhan>.canhan1>.anhdaidien {
+    background-size: cover;
+    background-position: center;
+    width: 17vh;
+    height: 17vh;
+    border-radius: 50%;
+    margin: auto;
+    border: 3px solid white;
+  }
+
+  .bia>.khungcanhan>.name {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.8vw;
+    text-align: center;
+    margin-top: 12vh;
+  }
+
+  .bia>.khungcanhan>.name>.banbe, .banchung {
+    font-size: 1vw;
+    color: dimgray;
+    text-decoration: none
+  }
+
+.banbe,.banchung:hover{
+  text-decoration:underline;
+}
+  .bia>.khungcanhan>.name>.tieusu {
+    font-size: 1.2vw
+  }
+
+  .bia>.khungcanhan>.congcu {
+    margin:0 auto;
+    width:fit-content;
+    white-space: nowrap;
+  }
+
+  .bia>.khungcanhan>.congcu>.congcu1 {
+    margin: 0.5vw;
+    font-size: 1vw;
+    padding: 1vw 1.8vw;
+    border: none;
+    border-radius: 5px;
+    background-color: #90C9D5;
+  }
+
+  .congcu1:hover {
+    background-color: #343a40;
+    color: #f8f9fa;
+  }
+  .thongtin{
+    padding:10px;
+    height:70px
+  }
+  .thongtin_icon{
+    float:left;scale:1.7;margin:15px
+  }
+  @media(max-width:980px) {
+    .bia>.khungcanhan {
+      width: 40%;
+      top: -10vh;
+      left: 28vw;
+      height: 50vh;
+      background: transparent;
+      float: left;
+    }
+
+    .bia>.khungcanhan>.canhan1 {
+      padding: 2vw;
+    }
+
+    .bia>.khungcanhan>.canhan1>.anhdaidien {
+      width: 15vh;
+      height: 15vh;
+    }
+
+    .bia>.khungcanhan>.name {
+      font-size: 3.5vh;
+      margin-top: 3vh;
+    }
+
+    .bia>.khungcanhan>.name>.banbe {
+      font-size: 2vh;
+    }
+
+    .bia>.khungcanhan>.name>.tieusu {
+      font-size: 2vh
+    }
+
+    .bia {
+      width: 100%;
+      margin: 6.5vh 0 0 0;
+    }
+
+    .bia>.bia1 {
+      width: 100%;
+      height: 40vh;
+    }
+
+    .bia>.khungcanhan>.congcu {
+      padding: 2vw;
+      white-space: nowrap;
+    }
+
+    .bia>.khungcanhan>.congcu>.congcu1 {
+      margin-left: 1.4vw;
+      font-size: 2.5vh;
+      padding: 1.8vw 4vw;
+    }
+
+    .story_banbe {
+      margin-top: -10vh;
+    }
+  }
+
+  @media(max-width:630px) {
+    .bia>.khungcanhan {
+      width: 70%;
+      top: -9vh;
+      left: 15vw
+    }
+
+    .bia>.khungcanhan>.congcu {
+      padding: 2vw;
+      white-space: nowrap;
+    }
+
+    .bia>.khungcanhan>.congcu>.congcu1 {
+      margin-left: 5vw;
+      font-size: 2.5vh;
+      padding: 2.5vw 6vw;
+    }
+  }
+</style>
+
+<div class="bia">
+  <div class="bia1"></div>
+  <div class="khungcanhan">
+
+
+    <a data-toggle="modal" href='#modal-id-thongtin' style="scale:1.5;right:10px;top:10px;position:absolute;z-index:2;color:black"><i class="fa-solid fa-circle-info"></i></a>
+    <div class="modal fade" id="modal-id-thongtin">
+      <div class="modal-dialog">
+        <div class="modal-content" style="width:380px;height:480px; border-radius:15px;margin:16vh auto">
+          <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+            <h5 class="modal-title" style="position:absolute;left:41%;text-align:center;color:black">Thông tin</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+          </div>
+          <div class="modal-body" style="padding:0;overflow:auto">
+            <div class="thongtin">
+              <div class="thongtin_icon"><i class="fa-solid fa-at"></i></div>Email
+              <div id="email" style="color:gray">abc</div>
+            </div>
+            <div class="thongtin">
+              <div class="thongtin_icon"><i class="fa-solid fa-calendar-days"></i></div>Ngày sinh
+              <div id="date" style="color:gray">abc</div>
+            </div>
+            <div class="thongtin">
+              <div class="thongtin_icon">
+                <i class="fa-solid fa-mars"></i>
+              </div>Giới tính
+              <div id="gender" style="color:gray">abc</div>
+            </div>
+            <div class="thongtin">
+              <div class="thongtin_icon"><i class="fa-solid fa-school"></i></div>Học tại
+              <div id="study_at"style="color:gray">abc</div>
+            </div>
+            <div class="thongtin">
+              <div class="thongtin_icon"><i class="fa-solid fa-building"></i></div>Làm việc tại
+              <div id="work_at" style="color:gray">abc</div>
+            </div>
+            <div class="thongtin">
+              <div class="thongtin_icon"><i class="fa-solid fa-heart"></i></div>Mối quan hệ
+              <div id="relationship" style="color:gray">abc</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="canhan1">
+      <div class="anhdaidien"></div>
+    </div>
+    <div class="name">
+      <div id="username"><strong> username</strong></div>
+      <div id="bio" class="tieusu"><br>bio</div>
+    </div>
+      <div class="congcu">
+      <button class="congcu1"
+        onclick="window.location.href = '/?recipientId=' + userId + '&roomId=';">Nhắn tin</button>
+      </div>
+
+</div>
+<div style="border-bottom:1px solid lightgray; margin:5% 10vw 0 10vw; width:80%"></div>
+</div>
+<script>
+    const imgBaseUrl = '/static/img/';
+    const userId = "{{ userid }}";
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchUserInfo()
+    });
+    function fetchUserInfo() {
+        $.ajax({
+            url: `/api/users/${userId}`,
+            method: 'GET',
+            success: function(user) {
+                document.getElementById('username').innerText = user.username;
+                document.getElementById('bio').innerText = user.bio;
+                document.querySelector('.bia1').style.backgroundImage = `url('${imgBaseUrl}${user.cover_picture}')`;
+                document.querySelector('.anhdaidien').style.backgroundImage = `url('${imgBaseUrl}${user.avatar}')`;
+
+                document.getElementById('email').innerText = user.email;
+                document.getElementById('date').innerText = user.date_of_birth;
+                document.getElementById('gender').innerText = user.gender;
+                document.getElementById('study_at').innerText = user.study_at;
+                document.getElementById('work_at').innerText = user.working_at;
+                document.getElementById('relationship').innerText = user.relationship;
+                console.log(user)
+            },
+            error: function(error) {
+                console.error('Error fetching user:', error);
+            }
+        });
+}
+</script>

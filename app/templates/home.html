@@ -493,11 +493,10 @@
     <div class="col_menu">
         <a href=""><img src="https://img.icons8.com/?size=256&id=Gc9qmZNN9yFN&format=png" style="margin-top: 100px;"></a>
         <a href=""><img src="https://img.icons8.com/?size=256&id=61161&format=png"></a>
-        <a href=""><img src="https://img.icons8.com/?size=256&id=43571&format=png"></a>
         <a href=""><img src="https://img.icons8.com/?size=256&id=88004&format=png"></a>
         <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
-        <a><img src="https://img.icons8.com/?size=256&id=14092&format=png"></a>
-         <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'>Đăng xuất</a>
+        <a href="/myprofile/"><img width="50" height="50" src="https://img.icons8.com/fluency-systems-regular/50/user--v1.png" alt="user--v1"/></a>
+        <a style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'><img width="32" height="32" src="https://img.icons8.com/windows/32/exit.png" alt="exit"/></a>
 <div class="modal fade" id="logout-modal">
     <div class="modal-dialog">
         <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
@@ -1041,6 +1040,7 @@ function calculateTimeAgo(timestamp) {
 document.addEventListener('DOMContentLoaded', function () {
     fetchChatUsers();  // Gọi API khi trang được tải
     fetchChatRooms();
+    getQueryParams()
 });
 const userInfo = {};
 function fetchInfo(recipientId = null, roomId = null, callback) {
@@ -1074,7 +1074,16 @@ function fetchInfo(recipientId = null, roomId = null, callback) {
         }
     });
 }
+function getQueryParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        recipientId: urlParams.get('recipientId'),
+        roomId: urlParams.get('roomId')
+    };
+}
 
+// Get recipientId and roomId from the URL
+const { recipientId, roomId } = getQueryParams();
 
 let chatSocket = null;
 function openChat(recipientId, roomId) {
@@ -1107,7 +1116,7 @@ function openChat(recipientId, roomId) {
             const displayUsername = data.username ? data.username : data.name;
             const displayEmail = data.email ? data.email : '';
             const html1 = `
-                <a href="" style="color:black">
+                <a href="profile/${data.id}" style="color:black">
                     <div class="ava" style="padding:27px;background-image: url('${imgBaseUrl}${data.avatar}');background-position: center;"></div>
                     <div class="username">${displayUsername}</div>
                 </a><br><br>
@@ -1132,7 +1141,11 @@ function openChat(recipientId, roomId) {
 
     setupMessageForm(recipientId, roomId, currentUserId);
 }
-
+// Check if the parameters exist, then call openChat
+if (recipientId) {
+    openChat(recipientId, roomId);
+    window.history.replaceState({}, '', window.location.origin);
+}
 
 function setupWebSocket(identifier, currentUserId) {
     const ws_url = `ws://${window.location.host}/ws/app/${identifier}/`;
