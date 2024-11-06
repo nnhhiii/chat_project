@@ -3,9 +3,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
-
-from .forms import LoginForm
-from rest_framework import viewsets
 from .forms import LoginForm, SignupForm
 from .models import User, ChatRoom, Message, UserChatRoom
 from .serializers import UserSerializer, ChatRoomSerializer, MessageSerializer, UserChatRoomSerializer
@@ -18,10 +15,7 @@ from django.contrib import messages
 from datetime import date
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.sessions.models import Session
-from .forms import GroupForm
 from rest_framework.decorators import api_view
-
-
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -40,11 +34,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-
 class ChatRoomViewSet(viewsets.ModelViewSet):
     queryset = ChatRoom.objects.all()
     serializer_class = ChatRoomSerializer
-
 
 class UserChatRoomViewSet(viewsets.ModelViewSet):
     queryset = UserChatRoom.objects.all()
@@ -106,9 +98,14 @@ class MessageViewSet(viewsets.ModelViewSet):
                 Q(message_by=other_user_id, message_to=current_user_id)
             ).order_by('created_at')
 
+        # Lọc tin nhắn theo trường is_deleted_by_user_a hoặc is_deleted_by_user_b
+        messages = messages.exclude(
+            Q(is_deleted_by_user_a=True, message_by=current_user_id) |
+            Q(is_deleted_by_user_b=True, message_to=current_user_id)
+        )
+
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
-
 
 def home(request):
     return render(request, 'home.html')
@@ -151,11 +148,9 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
-
 def logout_view(request):
     logout(request)  # Đăng xuất và xóa session
     return redirect('login')
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -168,11 +163,9 @@ def create_chat_room(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET'])
 def user_chat_room_list(request):
     return Response({"message": "User chat rooms here"})
-
 
 def add_user_to_chat(request):
     if request.method == 'POST':
@@ -219,31 +212,43 @@ def signup_view(request):
             messages.error(request, "Email này đã được sử dụng. Vui lòng nhập email khác.")
             return redirect('signup')
         elif User.objects.filter(username=username).exists():
-            messages.error(request, "Tên đăng nhập này đã tồn tại. Vui lòng chọn tên đăng nhập khác.")
+            messages.error(request, "Tên người dùng này đã được sử dụng. Vui lòng nhập tên khác.")
             return redirect('signup')
 
-        # Tạo đối tượng User mới
-        user = User(
+        # Tạo đối tượng người dùng mới
+        user = User.objects.create(
             username=username,
             email=email,
             password=make_password(password),  # Mã hóa mật khẩu
             gender=gender,
-            date_of_birth=f'{year_of_birth}-{month_of_birth}-{day_of_birth}',  # Định dạng ngày
+            date_of_birth=date(year=int(year_of_birth), month=int(month_of_birth), day=int(day_of_birth)),
             study_at=study_at,
             working_at=working_at,
-            bio=bio
+            bio=bio,
+            is_active=True
         )
-        user.save()  # Lưu người dùng vào cơ sở dữ liệu
-        messages.success(request, "Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.")
-        return redirect('login')  # Chuyển hướng đến trang đăng nhập
+        user.save()
 
-    # Nếu không phải là POST, trả về form đăng ký
-    days = list(range(1, 32))
-    months = list(range(1, 13))
-    years = list(range(1900, date.today().year + 1))
+        messages.success(request, "Đăng ký thành công. Bạn có thể đăng nhập ngay bây giờ.")
+        return redirect('login')
 
-    return render(request, 'signup.html', {
-        'days': days,
-        'months': months,
-        'years': years
+    return render(request, 'signup.html')
+
+
+def search(request):
+    query = request.POST.get('timkiem', '')
+    user_results = []
+    chat_results = []
+
+    if query:
+        # Tìm kiếm người dùng theo username
+        user_results = User.objects.filter(Q(username__icontains=query))  # Tìm kiếm người dùng có tên chứa từ khóa
+
+        # Tìm kiếm nhóm chat theo name (tên nhóm chat)
+        chat_results = ChatRoom.objects.filter(Q(name__icontains=query))  # Tìm kiếm nhóm chat có tên chứa từ khóa
+
+    return render(request, 'home.html', {
+        'user_results': user_results,
+        'chat_results': chat_results,
+        'query': query,
     })

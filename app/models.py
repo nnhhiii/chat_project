@@ -41,7 +41,18 @@ class Message(models.Model):
     message_type = models.CharField(max_length=10, choices=[('text', 'Text'), ('image', 'Image'), ('video', 'Video')])
     created_at = models.DateTimeField(auto_now_add=True)
     read_status = models.BooleanField(default=False)
-
+    is_deleted_by_user_a = models.BooleanField(default=False)  # Đánh dấu tin nhắn đã bị ẩn đối với người dùng A
+    is_deleted_by_user_b = models.BooleanField(default=False)  # Đánh dấu tin nhắn đã bị ẩn đối với người dùng B
 
     def __str__(self):
-        return self.name
+        return f"Message from {self.message_by} to {self.message_to}"
+
+    def delete_message(self, user):
+        """Đánh dấu tin nhắn là đã xóa đối với người dùng."""
+        if self.message_by == user:
+            self.is_deleted_by_user_a = True
+        elif self.message_to == user:
+            self.is_deleted_by_user_b = True
+        self.save()
+    def __str__(self):
+        return f"{self.message_by.username}: {self.content[:20]}"

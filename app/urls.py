@@ -18,5 +18,6 @@ urlpatterns = [
     path('signup/', signup_view, name='signup'),
     path('create_chat_room/', views.create_chat_room, name='create_chat_room'),
     path('add-user/', views.add_user, name='add_user'),
-
+    path('search/', views.search, name='search'),
 ]
+

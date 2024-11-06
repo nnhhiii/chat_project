@@ -195,6 +195,63 @@
     overflow: auto;
     padding: 15px 5px;
 }
+/* Container để giữ input và icon nằm chung */
+.timkiem-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Tạo độ rộng cho input */
+.tim_kiem {
+    width: 100%;
+    padding: 10px;
+    padding-right: 30px; /* Giữ khoảng cách cho icon */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Đặt icon vào trong cùng một hàng với input */
+.search-icon-btn {
+    position: absolute;
+    right: 10px; /* Đặt icon về phía bên phải */
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.search-icon {
+    width: 20px; /* Điều chỉnh kích thước của icon */
+}
+/* Container để giữ input và icon nằm chung */
+.timkiem-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Tạo độ rộng cho input */
+.tim_kiem {
+    width: 100%;
+    padding: 10px;
+    padding-right: 30px; /* Giữ khoảng cách cho icon */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+/* Đặt icon vào trong cùng một hàng với input */
+.search-icon-btn {
+    position: absolute;
+    right: 10px; /* Đặt icon về phía bên phải */
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.search-icon {
+    width: 20px; /* Điều chỉnh kích thước của icon */
+}
+
 @media (max-width:900px){
     .hienthi .col_left{
         width: 100px;
@@ -461,15 +518,58 @@
     <div class="hienthi">
         <div class="col_left">
             <div class="mess">Messages</div>
-            <div class="layout_tim_kiem">
-                <form id="timkiem_form"  enctype="multipart/form-data"method="post">
-                    <input class="tim_kiem" name="timkiem">
-                    <img src="https://img.icons8.com/search">
-                </form>
-                <a data-toggle="modal" href='#creatGroupChat' class="theAOpenModal" title="Tạo nhóm chat" >
-                    <button><i class="fa-solid fa-user-plus"></i></button></a>
+   <div class="layout_tim_kiem">
+    <form id="timkiem_form" method="post" action="{% url 'search' %}">
+        {% csrf_token %}
+        <div class="timkiem-container">
+            <input class="tim_kiem" type="text" name="timkiem" placeholder="Tìm kiếm người dùng hoặc nhóm chat...">
+            <button type="submit" class="search-icon-btn">
+                <img src="https://img.icons8.com/search" alt="search icon" class="search-icon">
+            </button>
+        </div>
+    </form>
+    <a data-toggle="modal" href='#creatGroupChat' class="theAOpenModal" title="Tạo nhóm chat">
+        <button><i class="fa-solid fa-user-plus"></i></button>
+    </a>
+</div>
 
-            </div>
+<div class="search-results">
+    {% if user_results %}
+        <div class="search-results-container">
+            {% for user in user_results %}
+                <div class="mess1" id="chat-user-{{ user.id }}" style="position:relative" data-chat-user-id="{{ user.id }}" onclick="openChat({{ user.id }}, null)">
+                    <!-- Hiển thị avatar người dùng -->
+                    <div class="ava" style="background-image: url('{% if user.avatar %}{{ user.avatar.url }}{% else %}/static/default-avatar.png{% endif %}'); background-position: center; background-size: cover; width: 50px; height: 50px; border-radius: 50%;"></div>
+                    <div class="username">{{ user.username }}</div>
+                    <br><br>
+                    <div class="mini_content" style="max-width:200px;">
+                        <span class="latest_message">{{ user.latest_message }}</span>
+                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">{{ user.last_active_time }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if chat_results %}
+        <div class="search-results-container">
+            {% for chat in chat_results %}
+                <div class="mess1" id="chat-room-{{ chat.id }}" style="position:relative" data-chat-room-id="{{ chat.id }}" onclick="openChat(null, {{ chat.id }})">
+                    <!-- Hiển thị avatar nhóm chat -->
+                    <div class="ava" style="background-image: url('{% if chat.avatar %}{{ chat.avatar.url }}{% else %}/static/default-group-avatar.png{% endif %}'); background-position: center; background-size: cover; width: 50px; height: 50px; border-radius: 50%;"></div>
+                    <div class="username">{{ chat.name }}</div>
+                    <br><br>
+                    <div class="mini_content" style="max-width:200px;">
+                        <span class="latest_message">{{ chat.latest_message }}</span>
+                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">{{ chat.last_active_time }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+
 {#            <div id="create-group-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4); z-index: 20; width: 300px;">#}
 {#                <form method="post" action="{% url 'create_chat_room' %}">#}
 {#                    {% csrf_token %}#}
@@ -656,24 +756,23 @@
         </div>
 
 
-        <a class="info_2" style="text-decoration:none;float:left"data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
-        <div class="modal fade" id="modal-id">
-            <div class="modal-dialog">
-                <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
-                    </div>
-                    <div class="modal-body" style="padding:0">
-                    <form method="post" enctype="multipart/form-data">
-                        <input type= "hidden" name="message_to1">
-                        <input type="hidden" name="message_by1" >
-                        <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
-                    </form>
-                        <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
-                    </div>
-                </div>
+       <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
+<div class="modal fade" id="modal-id">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+            <div class="modal-header">
+                <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
+            </div>
+            <div class="modal-body" style="padding:0">
+                <form method="post">
+
+                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
+                </form>
+                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
             </div>
         </div>
+    </div>
+</div>
     </div>
 </body>
 
