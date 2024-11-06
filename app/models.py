@@ -8,6 +8,7 @@ class User(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     avatar = models.CharField(max_length=500, default='user.jpeg')
+    cover_picture = models.CharField(max_length=500, default='cover_picture.png')
     bio = models.CharField(max_length=200, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     last_activity = models.CharField(max_length=100, blank=True, null=True)

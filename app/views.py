@@ -113,6 +113,11 @@ class MessageViewSet(viewsets.ModelViewSet):
 def home(request):
     return render(request, 'home.html')
 
+def my_profile(request):
+    return render(request, 'my_pro5.html')
+def profile(request, userid):
+    return render(request, 'user_pro5.html', {'userid': userid})
+
 def login_view(request):
     host_url = request.build_absolute_uri('/')
     if request.method == 'POST':
