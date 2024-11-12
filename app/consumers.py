@@ -25,9 +25,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.switch_group(new_identifier)
         else:
             # Gửi tin nhắn đến nhóm hiện tại
-            content = data.get('content', '')
+            content = data.get('content', None)
             message_type = data.get('message_type', 'text')
             message_by = data.get('message_by', 'Unknown')
+            file = data.get('file', None)
+
 
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -35,7 +37,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'content': content,
                     'message_type': message_type,
-                    'message_by': message_by
+                    'message_by': message_by,
+                    'file': file
                 }
             )
 
@@ -69,5 +72,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'content': event['content'],
             'message_type': event.get('message_type', 'text'),
-            'message_by': event.get('message_by', 'Unknown')
+            'message_by': event.get('message_by', 'Unknown'),
+            'file': event['file']
         }))

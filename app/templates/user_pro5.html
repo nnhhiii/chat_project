@@ -232,7 +232,6 @@
 <div style="border-bottom:1px solid lightgray; margin:5% 10vw 0 10vw; width:80%"></div>
 </div>
 <script>
-    const imgBaseUrl = '/static/img/';
     const userId = "{{ userid }}";
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -245,8 +244,8 @@
             success: function(user) {
                 document.getElementById('username').innerText = user.username;
                 document.getElementById('bio').innerText = user.bio;
-                document.querySelector('.bia1').style.backgroundImage = `url('${imgBaseUrl}${user.cover_picture}')`;
-                document.querySelector('.anhdaidien').style.backgroundImage = `url('${imgBaseUrl}${user.avatar}')`;
+                document.querySelector('.bia1').style.backgroundImage = `url('${user.cover_picture}')`;
+                document.querySelector('.anhdaidien').style.backgroundImage = `url('${user.avatar}')`;
 
                 document.getElementById('email').innerText = user.email;
                 document.getElementById('date').innerText = user.date_of_birth;

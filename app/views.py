@@ -1,4 +1,8 @@
+import cloudinary
+from cloudinary.uploader import upload  # Correct import
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from rest_framework import viewsets, status
@@ -106,6 +110,51 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
+    def send_message(self, request):
+        content = request.data.get('content')
+        file = request.FILES.get('file')
+        message_by = User.objects.get(id=request.session['current_user_id'])
+
+        if file:
+            if file.content_type.startswith('video'):
+                cloudinary_response = cloudinary.uploader.upload(file, resource_type="video")
+                message_type = 'video'
+            else:
+                cloudinary_response = cloudinary.uploader.upload(file)
+                message_type = 'image'
+            file_url = cloudinary_response.get('secure_url')
+        else :
+            file_url=None
+            message_type = 'text'
+
+        # Kiểm tra room_id và message_to
+        room_id = request.data.get('room_id')
+        message_to_id = request.data.get('message_to')
+
+        if room_id:
+            message_to = None
+        else:
+            message_to = User.objects.get(id=message_to_id)  # Lấy User nếu có message_to
+            room_id = None
+
+        # Lưu tin nhắn vào cơ sở dữ liệu
+        message = Message.objects.create(
+            content=content,
+            message_by=message_by,
+            message_type=message_type,
+            message_to=message_to,
+            room_id=room_id,
+            file=file_url
+        )
+        return Response({
+            'content': message.content,
+            'message_type': message_type,
+            'message_to': UserSerializer(message_to).data,
+            'message_by':UserSerializer(message_by).data,
+            'file':file_url})
+
 
 def home(request):
     return render(request, 'home.html')

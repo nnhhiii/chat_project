@@ -212,7 +212,8 @@
 }
 
 /* Đặt icon vào trong cùng một hàng với input */
-.search-icon-btn {
+.
+-icon-btn {
     position: absolute;
     right: 10px; /* Đặt icon về phía bên phải */
     border: none;
@@ -323,7 +324,6 @@
     width:100%;
     float:left;
     position: relative;
-    margin-bottom: 15px;
 }
 .image-message{
     width:350px;
@@ -346,6 +346,7 @@
 .received-message{
     float:left;
     border-radius:18px 18px 18px 2px;
+    margin-bottom: 15px;
 }
 .link-message a {
     max-width:60%;
@@ -491,10 +492,7 @@
 </style>
 <body>
     <div class="col_menu">
-        <a href=""><img src="https://img.icons8.com/?size=256&id=Gc9qmZNN9yFN&format=png" style="margin-top: 100px;"></a>
-        <a href=""><img src="https://img.icons8.com/?size=256&id=61161&format=png"></a>
-        <a href=""><img src="https://img.icons8.com/?size=256&id=88004&format=png"></a>
-        <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
+        <a><img style="margin-top: 100px;" src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
         <a href="/myprofile/"><img width="50" height="50" src="https://img.icons8.com/fluency-systems-regular/50/user--v1.png" alt="user--v1"/></a>
         <a style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'><img width="32" height="32" src="https://img.icons8.com/windows/32/exit.png" alt="exit"/></a>
 <div class="modal fade" id="logout-modal">
@@ -682,8 +680,8 @@
                         <button type="button" class="icon_cuoi">&#129322;</button>
                         <button type="button" class="icon_cuoi">&#129398;</button>
                     </div>
-                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;">
-                <label for="fileInput">
+                <input type="file" name="file" id="image" accept="image/*, video/*" style="display: none;">
+                <label for="image">
                     <img class="icon" id="attachment_icon" src="https://img.icons8.com/?size=512&id=114320&format=png">
                 </label>
 
@@ -884,10 +882,7 @@ function openModal() {
         }
     }
 </script>
-{#<script src="{%static 'js/list_chat.js'%}"></script>#}
-{#<script src="{%static 'js/message.js'%}"></script>#}
 <script>
-    const imgBaseUrl = '/static/img/';
     let latestMessages = [];  // Mảng lưu trữ thông tin tin nhắn gần nhất
 
 function fetchChatUsers() {
@@ -992,7 +987,7 @@ function updateChatListDisplay() {
             html = `
             <a onclick="openChat(${item.id}, null)">
                 <div class="mess1" id="chat-user" style="position:relative" data-chat-user-id="${item.id}">
-                    <div class="ava" style="background-image: url('${imgBaseUrl}${item.avatar}'); background-position: center"></div>
+                    <div class="ava" style="background-image: url('${item.avatar}'); background-position: center"></div>
                     <div class="username">${item.username}</div>
                     <br><br>
                     <div class="mini_content" style="max-width:200px;">
@@ -1005,7 +1000,7 @@ function updateChatListDisplay() {
             html = `
             <a onclick="openChat(null, ${item.id})">
                 <div class="mess1" id="chat-room" data-chat-room-id="${item.id}" style="position:relative">
-                    <div class="ava" style="background-image: url('${imgBaseUrl}${item.avatar}');"></div>
+                    <div class="ava" style="background-image: url('${item.avatar}');"></div>
                     <div class="username">${item.name}</div>
                     <br><br>
                     <div class="mini_content" style="max-width:200px;">
@@ -1117,7 +1112,7 @@ function openChat(recipientId, roomId) {
             const displayEmail = data.email ? data.email : '';
             const html1 = `
                 <a href="profile/${data.id}" style="color:black">
-                    <div class="ava" style="padding:27px;background-image: url('${imgBaseUrl}${data.avatar}');background-position: center;"></div>
+                    <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
                     <div class="username">${displayUsername}</div>
                 </a><br><br>
                 <div class="mini_content">Đang hoạt động</div>`;
@@ -1125,7 +1120,7 @@ function openChat(recipientId, roomId) {
             const html = `
                 <a href="" style="color:black">
                     <div class="mess1">
-                        <div class="ava" style="background-image: url('${imgBaseUrl}${data.avatar}');"></div>
+                        <div class="ava" style="background-image: url('${data.avatar}');"></div>
                         <div class="username">${displayUsername}</div><br><br>
                         <div class="mini_content">${displayEmail}</div>
                     </div>
@@ -1173,8 +1168,60 @@ function setupWebSocket(identifier, currentUserId) {
         }, 5000);
     };
 }
-
 function setupMessageForm(recipientId, roomId, currentUserId) {
+    $('#image').on('change', function (event) {
+    const file = event.target.files[0];  // Lấy tệp tin được chọn (ảnh hoặc video)
+
+    if (file) {
+        // Dữ liệu gửi qua API
+        const formData = new FormData();
+        formData.append('content', 'Đã gửi một tệp.');
+        formData.append('message_by', currentUserId);
+        formData.append('message_type', file.type.startsWith('image') ? 'image' : 'video');
+
+        if (roomId) {
+            formData.append('room', roomId);
+            formData.append('message_to', null);
+        } else if (recipientId) {
+            formData.append('room', null);
+            formData.append('message_to', recipientId);
+        }
+
+        if (file) {
+            formData.append('file', file);  // Gửi tệp tin lên server
+        }
+
+        // Gửi tin nhắn qua AJAX
+        $.ajax({
+            url: '/api/messages/send_message/',  // URL gửi tin nhắn
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: formData,
+            processData: false,  // Không tự động chuyển đổi dữ liệu
+            contentType: false,  // Cho phép gửi dữ liệu không có content-type
+            success: function (data) {
+                console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
+                // Gửi tin nhắn qua WebSocket
+                chatSocket.send(JSON.stringify({
+                    'content': 'Đã gửi một tệp',
+                    'message_by': currentUserId,
+                    'message_type': data.message_type,
+                    'file': data.file
+                }));
+                latestMessages = [];
+                fetchChatUsers();
+                fetchChatRooms();
+            },
+            error: function (error) {
+                console.error("Lỗi khi lưu tin nhắn:", error);
+            }
+        });
+        $('#image').val('');  // Xóa tệp tin đã chọn
+    }
+});
+
     $('#messageForm').off('submit').on('submit', function (event) {
         event.preventDefault();
         const content = $('textarea[name="content"]').val();
@@ -1203,7 +1250,7 @@ function setupMessageForm(recipientId, roomId, currentUserId) {
 
             // Gửi tin nhắn đến API
             $.ajax({
-                url: 'api/messages/',
+                url: 'api/messages/send_message/',
                 type: 'POST',
                 contentType: 'application/json',
                 headers: {
@@ -1272,7 +1319,6 @@ async function loadMessage(roomId = null, recipientId = null, currentUserId) {
 
 
 function displayMessage(data, currentUserId) {
-    const imgBaseUrl = '/static/img/';
     let messageHtml;
     let messageClass;
     const messageById = Number(data.message_by);
@@ -1288,7 +1334,7 @@ function displayMessage(data, currentUserId) {
             // Chỉ hiển thị avatar nếu không phải là tin nhắn của currentUserId
             if (messageById !== currentUserIdNumber) {
                 messageHtml = '<div class="content-message">' +
-                    '<div class="ava" style="width: 25px;height:25px;margin-top: 25px;padding:0;background-image: url(' + imgBaseUrl + data.avatar + '); background-position: center"></div>' +
+                    '<div class="ava" style="width: 25px;height:25px;margin-top: 25px;padding:0;background-image: url('+ data.avatar + '); background-position: center"></div>' +
                     '<div class="mini_content" style="position: absolute;left: 45px;top: -10px;">' + data.username + '</div>' +
                     '<div class="text-message ' + messageClass + '">' + data.content + '</div></div>';
             }else{
@@ -1296,10 +1342,18 @@ function displayMessage(data, currentUserId) {
             }
         break;
         case 'image':
-            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><img src="' + data.content + '" alt="Image" /></div></div>';
+            if (messageById !== currentUserIdNumber) {
+                messageHtml = '<div class="content-message">' +
+                    '<div class="ava" style="width: 25px;height:25px;margin-top: 25px;position:absolute; bottom:0;padding:0;background-image: url('+ data.avatar + '); background-position: center"></div>' +
+                    '<div class="mini_content" style="position: absolute;left: 45px;top: -10px;">' + data.username + '</div>' +
+                    '<img class="image-message ' + messageClass + '" src="' + data.file + '" alt="Image" /></div>';
+            }else{
+                messageHtml = '<div class="content-message"><img class="image-message ' + messageClass + '" src="' + data.file + '" alt="Image" /></div>';
+            }
+
             break;
         case 'video':
-            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><video controls><source src="' + data.content + '" type="video/mp4">Trình duyệt của bạn không hỗ trợ video.</video></div></div>';
+            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><video class=" image-message ' + messageClass + '" controls><source src="' + data.file + '">Trình duyệt của bạn không hỗ trợ video.</video></div></div>';
             break;
         case 'link':
             messageHtml = '<div class="content-message"><div class=" link-message ' + messageClass + '"><a href="' + data.content + '" target="_blank">' + data.content + '</a></div></div>';

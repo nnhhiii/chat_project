@@ -1,3 +1,4 @@
+from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -38,8 +39,9 @@ class Message(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, blank=True, null=True)
     message_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     message_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages', null=True)
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
     message_type = models.CharField(max_length=10, choices=[('text', 'Text'), ('image', 'Image'), ('video', 'Video')])
+    file = models.TextField('file', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     read_status = models.BooleanField(default=False)
     is_deleted_by_user_a = models.BooleanField(default=False)  # Đánh dấu tin nhắn đã bị ẩn đối với người dùng A
