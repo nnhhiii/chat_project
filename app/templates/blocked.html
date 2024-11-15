@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blocked Users</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Danh sách người dùng bị block</h1>
+    <ul id="blockedUsersList"></ul>
+
+    <script>
+        $(document).ready(function() {
+            const currentUserId = "{{ request.session.current_user_id }}";
+
+            // Lấy danh sách người dùng bị block
+            $.ajax({
+                url: '/api/blockedusers/get-blocked-users/',
+                method: 'GET',
+                success: function(response) {
+                    if (response && response.length > 0) {
+                        response.forEach(function(user) {
+                            $('#blockedUsersList').append(
+                                `<li>${user.username} - ${user.email}</li>
+                                <button class="unblock-btn" data-user-id="${user.id}">Bỏ chặn</button>`
+                            );
+                        });
+                    } else {
+                        $('#blockedUsersList').append('<li>Không có người dùng nào bị block.</li>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Có lỗi xảy ra:', error);
+                    $('#blockedUsersList').append('<li>Lỗi khi tải dữ liệu.</li>');
+                }
+            });
+
+            // Gắn sự kiện bỏ chặn vào các nút động
+            $(document).on('click', '.unblock-btn', function() {
+                const userId = $(this).data('user-id');
+
+                $.ajax({
+                    url: '/api/blockedusers/unblock/',
+                    method: 'POST',
+                    headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+                    data: {
+                        blocker_id: currentUserId,
+                        blocked_id: userId
+                    },
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload(); // Tải lại trang để cập nhật
+                    },
+                    error: function(xhr) {
+                        console.error('Lỗi khi bỏ chặn người dùng:', xhr.responseText);
+                    }
+                });
+            });
+        });
+
+        function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    </script>
+</body>
+</html>

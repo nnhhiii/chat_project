@@ -492,7 +492,8 @@
 </style>
 <body>
     <div class="col_menu">
-        <a><img style="margin-top: 100px;" src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
+        <a href="/blockedlist/"><img style="margin-top: 100px;" width="24" height="24" src="https://img.icons8.com/external-tanah-basah-basic-outline-tanah-basah/24/external-block-user-user-tanah-basah-basic-outline-tanah-basah.png" alt="external-block-user-user-tanah-basah-basic-outline-tanah-basah"/></a>
+        <a><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
         <a href="/myprofile/"><img width="50" height="50" src="https://img.icons8.com/fluency-systems-regular/50/user--v1.png" alt="user--v1"/></a>
         <a style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'><img width="32" height="32" src="https://img.icons8.com/windows/32/exit.png" alt="exit"/></a>
 <div class="modal fade" id="logout-modal">
@@ -525,7 +526,7 @@
             </button>
         </div>
     </form>
-    <a data-toggle="modal" href='#creatGroupChat' class="theAOpenModal" title="Tạo nhóm chat">
+    <a data-toggle="modal" href='#creatGroupChat' class="theAOpenModalCreateRoom" title="Tạo nhóm chat">
         <button><i class="fa-solid fa-user-plus"></i></button>
     </a>
 </div>
@@ -566,23 +567,12 @@
     {% endif %}
 </div>
 
-
-{#            <div id="create-group-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4); z-index: 20; width: 300px;">#}
-{#                <form method="post" action="{% url 'create_chat_room' %}">#}
-{#                    {% csrf_token %}#}
-{#                    <h2 style="margin-top: 0; text-align: center;">Tạo Nhóm Chat</h2>#}
-{#                    <input type="text" name="name" placeholder="Nhập tên nhóm..." required style="margin-bottom: 10px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">#}
-{#                    <button type="submit" style="margin-top: 10px; width: 100%; background-color: #4CAF50; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer;">Tạo nhóm</button>#}
-{#                </form>#}
-{#                <button onclick="toggleCreateGroupForm()" style="margin-top: 10px; background: none; border: none; color: red; cursor: pointer; display: block; width: 100%; text-align: center;">Đóng</button>#}
-{#            </div>#}
-
             <div class="modal fade" id="creatGroupChat">
                 <div class="modal-dialog">
                     <form action="" enctype="multipart/form-data" method="post">
                         <div class="modal-content" style="width:480px;height:520px; border-radius:15px;margin-top:10vh">
                             <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
-                                <h5 class="modal-title" style="position:absolute;left:32%;text-align:center;">Tạo nhóm</h5>
+                                <h5 class="modal-title" style="position:absolute;left:32%;text-align:center;">Tạo nhóm chat</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
                             </div>
                             <div class="modal-body" style="padding:0">
@@ -602,35 +592,10 @@
                                 </form>
 
                                 <!-- Show users -->
-                                <div class="showUsers" style="height: 270px; overflow:auto">
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
-                                </div>
+                                <div class="showUsers" style="height: 270px; overflow:auto"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary share_button">Tạo nhóm</button>
+                                <button type="button" class="btn btn-primary btnCreateRoom">Tạo nhóm</button>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                             </div>
                         </div>
@@ -692,22 +657,23 @@
 
     <div id=info>
         <div class="layout_info"><div class="info_1">Chi tiết</div></div>
-        <div style="height:580px;border-bottom: 1px solid lightgray;">
+        <div style="height:520px;border-bottom: 1px solid lightgray;">
 
             <!-- js fetchInfo thông tin user or room -->
             <div class= "layout_info1"></div>
 
             <!-- modal add user -->
-            <a data-toggle="modal" id="btnAddUser" href='#addUserModal' style="display:none;color:black" class="theAOpenModal">
-                <div class="mess1">Thêm người dùng <i class="fa-solid fa-user-plus"></i></div>
+            <a data-toggle="modal" id="btnAddUser" href='#addUserModal' style="display:none;color:black" class="theAOpenModalAddUser">
+                <button class="mess1" style="border: none;width: 80%;height: 50px;margin: 10%;border-radius: 8px;">
+                    Thêm người dùng <i class="fa-solid fa-user-plus"></i></button>
             </a>
             <div class="modal fade" id="addUserModal">
                 <div class="modal-dialog">
-                    <form action="" enctype="multipart/form-data" method="post">
+                    <form id="addMembersForm" method="post">
                         <div class="modal-content" style="width:480px;height:420px; border-radius:15px;margin-top:20vh">
                             <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
                                 <h5 class="modal-title" style="position:absolute;left:32%;text-align:center;">Thêm người dùng</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+                                <button type="button" class="close" data-dismiss="modal" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
                             </div>
                             <div class="modal-body" style="padding:0;overflow:auto">
                                 <!-- Search -->
@@ -718,31 +684,11 @@
                                 </form>
 
                                 <!-- Show users -->
-                                <div class="showUsers">
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
-
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
-
-                                    <label for="mess" class="mess1">
-                                        <div class="ava"></div>
-                                        <div class="username">username</div><br><br>
-                                        <div class="mini_content">email</div>
-                                        <input type="checkbox" name="share_to" value="" id="mess" style="float:right;margin:-20px 20px">
-                                    </label>
+                                <div class="showUsersNotInRoomId">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary share_button">Thêm người dùng</button>
+                                <button type="submit" class="btn btn-primary ">Thêm người dùng</button>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                             </div>
                         </div>
@@ -750,26 +696,27 @@
                 </div>
             </div>
 
+            <div class="title_members" style="display: none">Thành viên nhóm</div>
+            <div class="memberList" style="overflow-y: auto;height: 330px;"></div>
         </div>
-
-
        <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
-<div class="modal fade" id="modal-id">
-    <div class="modal-dialog">
-        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-            <div class="modal-header">
-                <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
-            </div>
-            <div class="modal-body" style="padding:0">
-                <form method="post">
+        <div class="modal fade" id="modal-id">
+            <div class="modal-dialog">
+                <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
+                    </div>
+                    <div class="modal-body" style="padding:0">
+                        <form method="post">
 
-                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
-                </form>
-                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                            <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
+                        </form>
+                        <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+        <div class = "layout_info2"></div>
     </div>
 </body>
 
@@ -837,53 +784,106 @@
             document.getElementById("myIcon").style.display = "none";
         }
     });
-    $('#create-group-btn').click(function() {
-    const groupName = $('#group-name-input').val();
-    const groupAvatar = $('#group-avatar-input')[0].files[0];
 
-    const formData = new FormData();
-    formData.append('name', groupName);
-    if (groupAvatar) {
-        formData.append('avatar', groupAvatar);
-    }
-
-    $.ajax({
-        url: '/api/chat-rooms/',
-        method: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function(data) {
-            console.log('Nhóm chat đã được tạo:', data);
-            fetchChatRooms();
-        },
-        error: function(error) {
-            console.error('Lỗi khi tạo nhóm chat:', error);
-        }
+    $(document).on('click', '.theAOpenModalCreateRoom', function () {
+        $('.showUsers').html('');
+        fetchAllUsers();
     });
-});
-function openModal() {
-            document.getElementById("addUserModal").style.display = "block";
-        }
 
-        function closeModal() {
-            document.getElementById("addUserModal").style.display = "none";
-        }
-//tao nhom chat
-    function toggleCreateGroupForm() {
-        var form = document.getElementById("create-group-form");
-        var overlay = document.getElementById("overlay");
-        if (form.style.display === "none" || form.style.display === "") {
-            form.style.display = "block";
-            overlay.style.display = "block";
-        } else {
-            form.style.display = "none";
-            overlay.style.display = "none";
-        }
-    }
 </script>
+
+
+
 <script>
     let latestMessages = [];  // Mảng lưu trữ thông tin tin nhắn gần nhất
+    // Sự kiện khi nhấn nút "Tạo nhóm"
+$('.btnCreateRoom').on('click', function() {
+    const groupName = $('#groupName').val();
+    const avatarFileInput = document.getElementById('fileInput');
+    const selectedUserIds = $('input[name="addUserId"]:checked').map(function() {
+        return $(this).val();
+    }).get();
+
+    // Kiểm tra nếu không có tên nhóm
+    if (!groupName.trim()) {
+        alert("Vui lòng nhập tên nhóm.");
+        return;
+    }
+    if (selectedUserIds.length === 0) {
+        alert('Vui lòng chọn ít nhất một người dùng để tạo nhóm.');
+        return;
+    }
+
+    // Xử lý hình ảnh đại diện (nếu có) hoặc đặt ảnh mặc định
+    let avatarUrl = 'https://res.cloudinary.com/dpuldllty/image/upload/v1719823233/samples/balloons.jpg';
+    if (avatarFileInput.files && avatarFileInput.files[0]) {
+        avatarUrl = URL.createObjectURL(avatarFileInput.files[0]);
+    }
+
+    // Tạo payload gửi lên server
+    fetchInfo(currentUserId, null, function () {
+        const userData = userInfo[currentUserId];
+        const payload = {
+            'name': groupName,
+            'avatar': avatarUrl,
+            'creator': currentUserId,
+            'users': selectedUserIds,
+            'content': `Phòng được tạo bởi ${userData.username}`,
+        };
+
+        // Gửi yêu cầu tạo nhóm qua API
+        $.ajax({
+            url: 'api/chatrooms/create-room/',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: JSON.stringify(payload),
+            success: function(data) {
+                console.log('Nhóm chat đã được tạo:', data);
+                latestMessages = [];
+                fetchChatUsers();
+                fetchChatRooms();
+
+                $('#creatGroupChat').modal('hide');
+            },
+            error: function(error) {
+                console.error("Lỗi khi tạo nhóm:", error);
+            }
+        });
+    });
+});
+
+function fetchAllUsers(callback) {
+    let htmlUserCreateRoom = '';
+    $.ajax({
+        url: '/api/users/',
+        method: 'GET',
+        success: function (data) {
+             $.each(data, function (index, user) {
+                 if (callback) {
+                    callback(data);
+                }
+                 if (user.id === Number(currentUserId)) {
+                    return;
+                }
+                htmlUserCreateRoom = `
+                    <label for="mess${user.id}" class="mess1">
+                        <div class="ava" style="background-image: url('${user.avatar}')"></div>
+                        <div class="username">${user.username}</div><br><br>
+                        <div class="mini_content">${user.email}</div>
+                        <input type="checkbox" name="addUserId" value="${user.id}" id="mess${user.id}" style="float:right;margin:-20px 20px">
+                    </label>`;
+
+                 $('.showUsers').append(htmlUserCreateRoom);
+            });
+        },
+        error: function (error) {
+            console.error('Error fetching all users:', error);
+        }
+    });
+}
 
 function fetchChatUsers() {
     $.ajax({
@@ -897,6 +897,7 @@ function fetchChatUsers() {
                         latestMessages.push({
                             id: user.id,
                             username: user.username,
+                            email: user.email,
                             avatar: user.avatar,
                             type: 'user',
                             latestMessage: latestMessage
@@ -940,6 +941,69 @@ function fetchChatRooms() {
         }
     });
 }
+function fetchChatRoomMembers(roomId) {
+    let html = '';
+    let showDeleteButton = '';
+    let usersInRoom = new Set();
+    $.ajax({
+        url: `/api/userchatrooms/chat-rooms/?room_id=${roomId}`,
+        method: 'GET',
+        success: function (response) {
+            const users = response.users;
+            const roomCreatorId = response.room_creator_id;
+
+            if (users.length > 0) {
+                $.each(users, function (index, user) {
+                    usersInRoom.add(user.id);
+                    if (roomCreatorId === Number(currentUserId)) {
+                        document.getElementById("btnAddUser").style.display = "block";
+                        if (user.id !== roomCreatorId) {
+                            showDeleteButton = `
+                                <form id="delete-form" method="POST" data-user-id="${user.id}" data-room-id="${roomId}" style="position: absolute; right: 15px; bottom: 20px;">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                    <button type="submit" class="delete-button" style="background: none; border: none;">
+                                        <i class="fa-solid fa-user-minus"></i>
+                                    </button>
+                                </form>`;
+                        }
+                    }
+                    const miniContent = (user.id === roomCreatorId) ? 'Trưởng nhóm' : user.email;
+
+                    html += `
+                    <div class="mess1" style="position: relative">
+                        <a href="profile/${user.id}" style="color:black">
+                            <div class="ava" style="padding:27px;background-image: url('${user.avatar}');background-position: center;"></div>
+                            <div class="username">${user.username}</div>
+                        </a><br><br>
+                        <div class="mini_content">${miniContent}</div>
+                         ${showDeleteButton}
+                    </div>`;
+                });
+                $('.memberList').html(html);
+            }
+
+            fetchAllUsers(function (allUsers) {
+                let userNotInRoomList = '';
+                $.each(allUsers, function (index, item) {
+                    if (!usersInRoom.has(item.id)) {
+                        userNotInRoomList += `
+                            <label for="mess${item.id}" class="mess1">
+                                <div class="ava" style="background-image: url('${item.avatar}')"></div>
+                                <div class="username">${item.username}</div><br><br>
+                                <div class="mini_content">${item.email}</div>
+                                <input type="checkbox" name="addUserId" value="${item.id}" id="mess${item.id}" style="float:right;margin:-20px 20px">
+                            </label>`;
+                    }
+                });
+                $('.showUsersNotInRoomId').html(userNotInRoomList);
+            });
+        },
+        error: function (error) {
+            console.error('Error fetching chat rooms:', error);
+        }
+    });
+}
+
 
 // Hàm lấy tin nhắn gần nhất và gọi callback với thông tin tin nhắn
 function fetchLatestMessage(user_id, room_id, callback) {
@@ -1010,7 +1074,7 @@ function updateChatListDisplay() {
                 </div>
             </a>`;
         }
-        $('.chat_users_list').append(html); // Thêm HTML vào danh sách chat
+        $('.chat_users_list').append(html);
     });
 }
 
@@ -1033,7 +1097,7 @@ function calculateTimeAgo(timestamp) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetchChatUsers();  // Gọi API khi trang được tải
+    fetchChatUsers();
     fetchChatRooms();
     getQueryParams()
 });
@@ -1052,7 +1116,6 @@ function fetchInfo(recipientId = null, roomId = null, callback) {
         url: apiUrl,
         type: 'GET',
         success: function (data) {
-            // Lưu thông tin vào userInfo để dùng lại khi cần
             if (recipientId) {
                 userInfo[recipientId] = data;
             } else if (roomId) {
@@ -1083,11 +1146,16 @@ const { recipientId, roomId } = getQueryParams();
 let chatSocket = null;
 function openChat(recipientId, roomId) {
     $('.content').html('');
+    $('.memberList').html('');
+    $('.showUsersNotInRoomId').html('');
+    document.querySelector(".title_members").style.display = "none";
+    document.getElementById("btnAddUser").style.display = "none";
     const identifier = roomId ? `rooms_${roomId}` : `users_${recipientId}`;
 
     // Hiển thị nút thêm người dùng nếu là phòng chat
     if (roomId) {
-        document.getElementById("btnAddUser").style.display = "block";
+        document.querySelector(".title_members").style.display = "block";
+        fetchChatRoomMembers(roomId)
     }
 
     // Kiểm tra và chuyển kênh nếu đã có socket
@@ -1097,44 +1165,100 @@ function openChat(recipientId, roomId) {
                 command: 'switch',
                 identifier: identifier
             }));
-            chatSocket.identifier = identifier;
         }
     } else {
         setupWebSocket(identifier, currentUserId);
     }
-
+    setupMessageForm(recipientId, roomId, currentUserId);
     // Gọi fetchInfo trước để lấy thông tin, sau đó cập nhật giao diện và tải tin nhắn
     fetchInfo(recipientId, roomId, function() {
-        // Cập nhật giao diện với thông tin của người dùng hoặc phòng chat
+        let html1, html2, html ='';
         const data = userInfo[recipientId] || userInfo[roomId];
         if (data) {
-            const displayUsername = data.username ? data.username : data.name;
-            const displayEmail = data.email ? data.email : '';
-            const html1 = `
+            if (recipientId) {
+                html1 = `
                 <a href="profile/${data.id}" style="color:black">
                     <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
-                    <div class="username">${displayUsername}</div>
+                    <div class="username">${data.username}</div>
                 </a><br><br>
                 <div class="mini_content">Đang hoạt động</div>`;
 
-            const html = `
-                <a href="" style="color:black">
+                html = `
+                <a href="profile/${data.id}" style="color:black">
                     <div class="mess1">
                         <div class="ava" style="background-image: url('${data.avatar}');"></div>
-                        <div class="username">${displayUsername}</div><br><br>
-                        <div class="mini_content">${displayEmail}</div>
+                        <div class="username">${data.username}</div><br><br>
+                        <div class="mini_content">${data.email}</div>
                     </div>
                 </a>`;
 
+                html2 = `
+                <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalBlock'>Chặn người dùng này</a>
+                <div class="modal fade" id="modalBlock">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn chặn?</h5>
+                            </div>
+                            <div class="modal-body" style="padding:0">
+                                <form method="post" id="blockForm">
+<input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                    <button type="submit" data-user-id="${data.id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Chặn</button>
+                                </form>
+                                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }else {
+                html1 = `
+                <a href="" style="color:black">
+                    <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
+                    <div class="username">${data.name}</div>
+                </a><br><br>`;
+
+                html = `
+                <a href="" style="color:black">
+                    <div class="mess1">
+                        <div class="ava" style="background-image: url('${data.avatar}');"></div>
+                        <div class="username">${data.name}</div><br><br>
+                        <form method="post">
+                            <input type="file" accept="image/*" id="changeAvatarRoom" style="display: none;">
+                            <label for="changeAvatarRoom" style="cursor: pointer;">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                        </form>
+                    </div>
+                </a>`;
+
+                html2 = `
+                <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalLeave'>Rời nhóm</a>
+                <div class="modal fade" id="modalLeave">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn rời?</h5>
+                            </div>
+                            <div class="modal-body" style="padding:0">
+                                <form id="leaveRoomForm" method="post">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Rời nhóm</button>
+                                </form>
+                                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+            }
             $('#userInfo').html(html1);
             $('.layout_info1').html(html);
+            $('.layout_info2').html(html2);
         }
 
         // Sau khi lấy thông tin xong, tải tin nhắn
         loadMessage(roomId, recipientId, currentUserId);
     });
-
-    setupMessageForm(recipientId, roomId, currentUserId);
 }
 // Check if the parameters exist, then call openChat
 if (recipientId) {
@@ -1146,7 +1270,6 @@ function setupWebSocket(identifier, currentUserId) {
     const ws_url = `ws://${window.location.host}/ws/app/${identifier}/`;
 
     chatSocket = new WebSocket(ws_url);
-    chatSocket.identifier = identifier;
 
     // Nhận tin nhắn mới từ WebSocket
     chatSocket.onmessage = function (event) {
@@ -1170,57 +1293,57 @@ function setupWebSocket(identifier, currentUserId) {
 }
 function setupMessageForm(recipientId, roomId, currentUserId) {
     $('#image').on('change', function (event) {
-    const file = event.target.files[0];  // Lấy tệp tin được chọn (ảnh hoặc video)
-
-    if (file) {
-        // Dữ liệu gửi qua API
-        const formData = new FormData();
-        formData.append('content', 'Đã gửi một tệp.');
-        formData.append('message_by', currentUserId);
-        formData.append('message_type', file.type.startsWith('image') ? 'image' : 'video');
-
-        if (roomId) {
-            formData.append('room', roomId);
-            formData.append('message_to', null);
-        } else if (recipientId) {
-            formData.append('room', null);
-            formData.append('message_to', recipientId);
-        }
+        const file = event.target.files[0];  // Lấy tệp tin được chọn (ảnh hoặc video)
 
         if (file) {
-            formData.append('file', file);  // Gửi tệp tin lên server
-        }
+            // Dữ liệu gửi qua API
+            const formData = new FormData();
+            formData.append('content', 'Đã gửi một tệp.');
+            formData.append('message_by', currentUserId);
+            formData.append('message_type', file.type.startsWith('image') ? 'image' : 'video');
 
-        // Gửi tin nhắn qua AJAX
-        $.ajax({
-            url: '/api/messages/send_message/',  // URL gửi tin nhắn
-            type: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            data: formData,
-            processData: false,  // Không tự động chuyển đổi dữ liệu
-            contentType: false,  // Cho phép gửi dữ liệu không có content-type
-            success: function (data) {
-                console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
-                // Gửi tin nhắn qua WebSocket
-                chatSocket.send(JSON.stringify({
-                    'content': 'Đã gửi một tệp',
-                    'message_by': currentUserId,
-                    'message_type': data.message_type,
-                    'file': data.file
-                }));
-                latestMessages = [];
-                fetchChatUsers();
-                fetchChatRooms();
-            },
-            error: function (error) {
-                console.error("Lỗi khi lưu tin nhắn:", error);
+            if (roomId) {
+                formData.append('room', roomId);
+                formData.append('message_to', null);
+            } else if (recipientId) {
+                formData.append('room', null);
+                formData.append('message_to', recipientId);
             }
-        });
-        $('#image').val('');  // Xóa tệp tin đã chọn
-    }
-});
+
+            if (file) {
+                formData.append('file', file);  // Gửi tệp tin lên server
+            }
+
+            // Gửi tin nhắn qua AJAX
+            $.ajax({
+                url: '/api/messages/send_message/',  // URL gửi tin nhắn
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: formData,
+                processData: false,  // Không tự động chuyển đổi dữ liệu
+                contentType: false,  // Cho phép gửi dữ liệu không có content-type
+                success: function (data) {
+                    console.log('Tin nhắn đã được thêm vào cơ sở dữ liệu:', data);
+                    // Gửi tin nhắn qua WebSocket
+                    chatSocket.send(JSON.stringify({
+                        'content': 'Đã gửi một tệp',
+                        'message_by': currentUserId,
+                        'message_type': data.message_type,
+                        'file': data.file
+                    }));
+                    latestMessages = [];
+                    fetchChatUsers();
+                    fetchChatRooms();
+                },
+                error: function (error) {
+                    console.error("Lỗi khi lưu tin nhắn:", error);
+                }
+            });
+            $('#image').val('');  // Xóa tệp tin đã chọn
+        }
+    });
 
     $('#messageForm').off('submit').on('submit', function (event) {
         event.preventDefault();
@@ -1241,10 +1364,10 @@ function setupMessageForm(recipientId, roomId, currentUserId) {
             };
 
             if (roomId) {
-                payload['room'] = roomId;
+                payload['room_id'] = roomId;
                 payload['message_to'] = null;
             } else if (recipientId) {
-                payload['room'] = null;
+                payload['room_id'] = null;
                 payload['message_to'] = recipientId;
             }
 
@@ -1262,6 +1385,7 @@ function setupMessageForm(recipientId, roomId, currentUserId) {
                     latestMessages = [];
                     fetchChatUsers();
                     fetchChatRooms();
+
                 },
                 error: function(error) {
                     console.error("Lỗi khi lưu tin nhắn:", error);
@@ -1271,6 +1395,108 @@ function setupMessageForm(recipientId, roomId, currentUserId) {
             // Xóa nội dung sau khi gửi
             $('textarea[name="content"]').val('');
         }
+    });
+
+
+    $('#addMembersForm').off('submit').on('submit', function (e) {
+        e.preventDefault();
+
+        const selectedUserIds = $('input[name="addUserId"]:checked').map(function() {
+            return $(this).val();
+        }).get();
+
+        if (selectedUserIds.length === 0) {
+            alert('Vui lòng chọn ít nhất một người dùng.');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/userchatrooms/add-users/',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // Cần nếu dùng Django CSRF
+            },
+            data: JSON.stringify({
+                room_id: roomId,
+                user_ids: selectedUserIds
+            }),
+            success: function (response) {
+                alert(response.message);
+                fetchChatRoomMembers(roomId)
+            },
+            error: function (error) {
+                console.error("Lỗi khi thêm người dùng vào phòng:", error);
+            }
+        });
+    });
+    $(document).off('submit', '#delete-form').on('submit', '#delete-form', function (e) {
+        e.preventDefault();
+
+        const form = $(this);
+        const userIdToDelete = form.data('user-id');
+        const roomId = form.data('room-id');
+
+        $.ajax({
+            url: '/api/userchatrooms/delete-user-from-room/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: {
+                user_id: userIdToDelete,
+                room_id: roomId
+            },
+            success: function(response) {
+                fetchChatRoomMembers(roomId);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error occurred:', error);
+            }
+        });
+    });
+    $(document).off('submit', '#leaveRoomForm').on('submit', '#leaveRoomForm', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '/api/userchatrooms/delete-user-from-room/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: {
+                user_id: currentUserId,
+                room_id: roomId
+            },
+            success: function(response) {
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error occurred:', error);
+            }
+        });
+    });
+
+    $(document).off('submit', '#blockForm').on('submit', '#blockForm', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '/api/blockedusers/block/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: {
+                blocker_id: currentUserId,
+                blocked_id: recipientId
+            },
+            success: function(response) {
+                window.location.reload();
+            },
+            error: function(xhr) {
+                console.error('Lỗi khi chặn người dùng:', xhr.responseText);
+            }
+        });
     });
 }
 
@@ -1316,8 +1542,6 @@ async function loadMessage(roomId = null, recipientId = null, currentUserId) {
 }
 
 
-
-
 function displayMessage(data, currentUserId) {
     let messageHtml;
     let messageClass;
@@ -1353,7 +1577,14 @@ function displayMessage(data, currentUserId) {
 
             break;
         case 'video':
-            messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><video class=" image-message ' + messageClass + '" controls><source src="' + data.file + '">Trình duyệt của bạn không hỗ trợ video.</video></div></div>';
+            if (messageById !== currentUserIdNumber) {
+                messageHtml = '<div class="content-message">' +
+                    '<div class="ava" style="width: 25px;height:25px;margin-top: 25px;position:absolute; bottom:0;padding:0;background-image: url('+ data.avatar + '); background-position: center"></div>' +
+                    '<div class="mini_content" style="position: absolute;left: 45px;top: -10px;">' + data.username + '</div>' +
+                    '<video class=" image-message ' + messageClass + '" controls><source src="' + data.file + '">Trình duyệt của bạn không hỗ trợ video.</video></div>';
+            }else{
+                messageHtml = '<div class="content-message"><div class=" image-message ' + messageClass + '"><video class=" image-message ' + messageClass + '" controls><source src="' + data.file + '">Trình duyệt của bạn không hỗ trợ video.</video></div></div>';
+            }
             break;
         case 'link':
             messageHtml = '<div class="content-message"><div class=" link-message ' + messageClass + '"><a href="' + data.content + '" target="_blank">' + data.content + '</a></div></div>';

@@ -7,6 +7,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+class BlockedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlockedUser
+        fields = '__all__'
+
 class ChatRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatRoom

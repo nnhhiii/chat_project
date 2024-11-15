@@ -1,25 +1,16 @@
 import cloudinary
-from cloudinary.uploader import upload  # Correct import
-from django.contrib.auth.decorators import login_required
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from cloudinary.uploader import upload
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
 from .forms import LoginForm, SignupForm
-from .models import User, ChatRoom, Message, UserChatRoom
-from .serializers import UserSerializer, ChatRoomSerializer, MessageSerializer, UserChatRoomSerializer
+from .serializers import *
 from rest_framework.response import Response
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from datetime import date
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.sessions.models import Session
-from rest_framework.decorators import api_view
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -33,21 +24,146 @@ class UserViewSet(viewsets.ModelViewSet):
         sent_messages = Message.objects.filter(message_by=current_user_id).values_list('message_to', flat=True)
         received_messages = Message.objects.filter(message_to=current_user_id).values_list('message_by', flat=True)
         chat_users_ids = set(list(sent_messages) + list(received_messages))
+
+        # Lọc bỏ những người đã bị block
+        blocked_users_ids = BlockedUser.objects.filter(blocker=current_user_id).values_list('blocked', flat=True)
+        chat_users_ids = chat_users_ids - set(blocked_users_ids)
+
+        # Lấy thông tin những người dùng không bị block
         chat_users = User.objects.filter(id__in=chat_users_ids)
         serializer = UserSerializer(chat_users, many=True)
 
         return Response(serializer.data)
 
+    @action(detail=False, methods=['post'], url_path='update-avatar')
+    def update_avatar(self, request):
+        user = request.session.get('current_user_id')
+        file = request.FILES.get('avatar')
+
+        cloudinary_response = cloudinary.uploader.upload(file)
+        avatar_url = cloudinary_response.get('secure_url')
+
+        user = User.objects.get(id=user)
+        user.avatar = avatar_url
+        user.save()
+
+        return Response({
+            "message": "Đổi ảnh thành công.",
+            "avatar_url": avatar_url
+        }, status=status.HTTP_200_OK)
+
+class BlockedUserViewSet(viewsets.ModelViewSet):
+    queryset = BlockedUser.objects.all()
+    serializer_class = BlockedUserSerializer
+
+    @action(detail=False, methods=['get'], url_path='get-blocked-users')
+    def get_blocked_users(self, request):
+        current_user_id = request.session.get('current_user_id')
+        blocked_users = BlockedUser.objects.filter(blocker_id=current_user_id)
+        # Lấy thông tin người dùng bị block
+        blocked_user_ids = [blocked_user.blocked.id for blocked_user in blocked_users]
+
+        # Lấy thông tin chi tiết của các người dùng bị block
+        blocked_users_info = User.objects.filter(id__in=blocked_user_ids)
+        serializer = UserSerializer(blocked_users_info, many=True)
+
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'], url_path='block')
+    def block(self, request):
+        blocker_id = request.data.get('blocker_id')
+        blocked_id = request.data.get('blocked_id')
+
+        blocker = User.objects.get(id=blocker_id)
+        blocked = User.objects.get(id=blocked_id)
+
+        # Kiểm tra nếu người dùng đã bị chặn
+        if BlockedUser.objects.filter(blocker=blocker, blocked=blocked).exists():
+            return Response({'message': 'Người dùng đã bị chặn.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Lưu db
+        BlockedUser.objects.create(blocker=blocker, blocked=blocked)
+
+        return Response({'message': 'Chặn người dùng thành công!'}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], url_path='unblock')
+    def unblock(self, request):
+        blocker_id = request.data.get('blocker_id')
+        blocked_id = request.data.get('blocked_id')
+
+        blocker = User.objects.get(id=blocker_id)
+        blocked = User.objects.get(id=blocked_id)
+
+        # Kiểm tra nếu người dùng đã bị chặn
+        blocked_user = BlockedUser.objects.filter(blocker=blocker, blocked=blocked).first()
+        if not blocked_user:
+            return Response({'message': 'Người dùng không bị chặn.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Xóa bản ghi chặn
+        blocked_user.delete()
+
+        return Response({'message': 'Bỏ chặn người dùng thành công!'}, status=status.HTTP_200_OK)
+
+
 class ChatRoomViewSet(viewsets.ModelViewSet):
     queryset = ChatRoom.objects.all()
     serializer_class = ChatRoomSerializer
+
+    @action(detail=False, methods=['post'], url_path='create-room')
+    def create_chat_room(self, request):
+        name = request.data.get('name')
+        avatar = request.data.get('avatar')
+        creator_id = request.data.get('creator')
+        user_ids = request.data.get('users', [])
+        content = request.data.get('content')
+
+        # Tạo phòng chat
+        creator = User.objects.get(id=creator_id)
+        chat_room = ChatRoom.objects.create(name=name, avatar=avatar, creator=creator)
+
+        # Thêm creator vào phòng chat
+        UserChatRoom.objects.create(user=creator, room=chat_room)
+
+        # Thêm các người dùng vào phòng chat
+        for user_id in user_ids:
+            user = User.objects.get(id=user_id)
+            UserChatRoom.objects.get_or_create(user=user, room=chat_room)
+
+        # Tạo tin nhắn đầu tiên cho phòng chat
+        Message.objects.create(
+            room=chat_room,
+            message_by=creator,
+            content=content,
+            message_type='text'
+        )
+        # Trả về dữ liệu phòng chat mới
+        serializer = ChatRoomSerializer(chat_room)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], url_path='update-avatar')
+    def update_avatar(self, request):
+        room_id = request.data.get('room_id')
+        file = request.FILES.get('avatar')
+
+        cloudinary_response = cloudinary.uploader.upload(file)
+        avatar_url = cloudinary_response.get('secure_url')
+
+        room = ChatRoom.objects.get(id=room_id)
+        room.avatar = avatar_url
+        room.save()
+
+        return Response({
+            "message": "Đổi ảnh thành công.",
+            "avatar_url": avatar_url
+        }, status=status.HTTP_200_OK)
+
 
 class UserChatRoomViewSet(viewsets.ModelViewSet):
     queryset = UserChatRoom.objects.all()
     serializer_class = UserChatRoomSerializer
 
     @action(detail=False, methods=['get'], url_path='chat-rooms')
-    def get_request(self, request):
+    def room_or_user_info(self, request):
         user_id = request.query_params.get('user_id')
         room_id = request.query_params.get('room_id')
         if user_id:
@@ -59,30 +175,51 @@ class UserChatRoomViewSet(viewsets.ModelViewSet):
             users = [users_chat_room.user for users_chat_room in users_chat_rooms]
             serializer = UserSerializer(users, many=True)
 
+            # Lấy thông tin của phòng chat (bao gồm creator)
+            chat_room = ChatRoom.objects.get(id=room_id)
+            creator_id = chat_room.creator.id  # ID của người tạo phòng
+
+            # Trả về danh sách người dùng và ID của người tạo phòng
+            return Response({
+                'users': serializer.data,
+                'room_creator_id': creator_id
+            })
+
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'])
-    def add_user_to_chat_room(self, request):
-        user_id = request.data.get('user_id')
-        chat_room_id = request.data.get('chat_room_id')
+    @action(detail=False, methods=['post'], url_path='add-users')
+    def add_users_to_room(self, request):
+        room_id = request.data.get('room_id')
+        user_ids = request.data.get('user_ids', [])
 
-        if not user_id or not chat_room_id:
-            return Response({'error': 'user_id và chat_room_id là bắt buộc.'}, status=status.HTTP_400_BAD_REQUEST)
+        chat_room = ChatRoom.objects.get(id=room_id)
 
-        try:
+        for user_id in user_ids:
             user = User.objects.get(id=user_id)
-            chat_room = ChatRoom.objects.get(id=chat_room_id)
-            user_chat_room, created = UserChatRoom.objects.get_or_create(user=user, chat_room=chat_room)
+            UserChatRoom.objects.get_or_create(user=user, room=chat_room)
 
-            if created:
-                return Response({'message': 'User added to chat room successfully.'}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({'message': 'User already in this chat room.'}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Thêm thành viên thành công!",
+            "room_id": room_id,
+            "user_ids": user_ids
+            }, status=status.HTTP_200_OK)
 
-        except User.DoesNotExist:
-            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except ChatRoom.DoesNotExist:
-            return Response({'error': 'Chat room not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['post'], url_path='delete-user-from-room')
+    def delete_user_from_room(self, request):
+        user_id = request.data.get('user_id')
+        room_id = request.data.get('room_id')
+
+        # Kiểm tra xem người dùng có tồn tại trong phòng không
+        user_chat_room = UserChatRoom.objects.filter(user_id=user_id, room_id=room_id).first()
+
+        if user_chat_room:
+            user_chat_room.delete()  # Xóa người dùng khỏi phòng
+            return Response({
+                "message": "Xóa thành công!",
+                "room_id": room_id,
+                "user_id": user_id
+            }, status=status.HTTP_200_OK)
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -150,15 +287,18 @@ class MessageViewSet(viewsets.ModelViewSet):
         )
         return Response({
             'content': message.content,
-            'message_type': message_type,
-            'message_to': UserSerializer(message_to).data,
-            'message_by':UserSerializer(message_by).data,
-            'file':file_url})
+            'message_type': message.message_type,
+            'file': message.file,
+            'message_by': message.message_by.username,
+            'message_to': message.message_to.username if message.message_to else None,
+            'room_id': message.room_id
+        })
 
 
 def home(request):
     return render(request, 'home.html')
-
+def blocked_list(request):
+    return render(request, 'blocked.html')
 def my_profile(request):
     return render(request, 'my_pro5.html')
 def profile(request, userid):
@@ -205,48 +345,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)  # Đăng xuất và xóa session
     return redirect('login')
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_chat_room(request):
-    serializer = ChatRoomSerializer(data=request.data)
-
-    if serializer.is_valid():
-        chat_room = serializer.save(creator=request.user)
-        UserChatRoom.objects.create(user=request.user, room=chat_room)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET'])
-def user_chat_room_list(request):
-    return Response({"message": "User chat rooms here"})
-
-def add_user_to_chat(request):
-    if request.method == 'POST':
-        user_ids = request.POST.getlist('user_ids[]')
-        chat_room_id = request.POST.get('chat_room_id')  # Thêm cách lấy chat_room_id từ request
-        chat_room = UserChatRoom.objects.get(id=chat_room_id)
-
-        for user_id in user_ids:
-            user = User.objects.get(id=user_id)
-            chat_room.users.add(user)  # Thêm người dùng vào phòng chat
-
-        return redirect('chat_room_detail', chat_room_id=chat_room_id)  # Chuyển hướng về chi tiết phòng chat
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-
-@require_POST
-def add_user(request):
-    if request.method == 'POST':
-        user_ids = request.POST.getlist('user_ids')  # Lấy danh sách ID người dùng đã chọn
-        # Thực hiện logic để thêm người dùng vào nhóm
-        for user_id in user_ids:
-            # Thêm logic để thêm người dùng vào nhóm, ví dụ:
-            # UserChatRoom.objects.create(user_id=user_id, group=group)
-            pass
-        return redirect('chatrooms')  # Chuyển hướng sau khi thêm
-
-    return render(request, 'home.html')  # Nếu không phải POST, render lại trang
-
 def signup_view(request):
     if request.method == 'POST':
         # Nhận dữ liệu từ form

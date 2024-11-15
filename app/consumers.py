@@ -53,7 +53,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Cập nhật nhóm mới
         self.identifier = identifier
         if self.identifier.startswith("rooms_"):
-            self.room_group_name = f'chat_{self.identifier.split("_")[1]}'
+            self.room_group_name = f'room_{self.identifier.split("_")[1]}'
         elif self.identifier.startswith("users_"):
             self.room_group_name = f'user_{self.identifier.split("_")[1]}'
 

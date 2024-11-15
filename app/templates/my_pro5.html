@@ -436,26 +436,19 @@
       </div>
     </div>
     <div class="canhan1">
-      <div class="anhdaidien">
-        <img src="https://cdn-icons-png.flaticon.com/512/3624/3624186.png" onclick="avartar()"></i>
-      </div>
+      <div class="anhdaidien"> </div>
       <form action="" method="post" enctype="multipart/form-data" id="uploadForm">
-        <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;"
-          onchange="avatarPicked()" />
-        <input type="submit" style="display:none;" id="avatarSaveButton">
-      </form>
-      <script>
-        function avartar() {
-          document.getElementById('avatarPicker').click();
-        }
-        function avatarPicked() {
-          var input = document.getElementById('avatarPicker');
-          if (input.files && input.files[0]) {
-            console.log('Tệp đã chọn:', input.files[0].name);
-            document.getElementById('avatarSaveButton').click();
-          }
-        }
-      </script>
+    {% csrf_token %}
+
+    <!-- Nút biểu tượng camera, người dùng sẽ click vào đây để chọn ảnh -->
+    <label for="avatarPicker" style="cursor: pointer;">
+        <i class="fa-solid fa-camera"></i>
+    </label>
+
+    <!-- Ẩn input file, khi click vào label sẽ kích hoạt nó -->
+    <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
+</form>
+
     </div>
     <div class="name">
       <div id="username"><strong> username</strong></div>
@@ -525,7 +518,6 @@
     }
 
     function updateMyInfo() {
-    // Lấy thông tin từ các input
     const updatedUser = {
         username: document.getElementById('username').value,
         bio: document.getElementById('bio').value,
@@ -537,21 +529,57 @@
         relationship: document.getElementById('relationship').value
     };
 
-    // Gửi yêu cầu cập nhật thông tin qua AJAX (PUT hoặc PATCH tùy API)
     $.ajax({
         url: `/api/users/${currentUserId}/`,
-        method: 'PATCH',  // Hoặc 'PUT' nếu API của bạn yêu cầu
+        method: 'PATCH',
         data: JSON.stringify(updatedUser),
         contentType: 'application/json',
         success: function(response) {
             alert('Thông tin đã được cập nhật thành công');
-            // Có thể thực hiện thêm hành động khác như cập nhật lại giao diện
         },
         error: function(error) {
             console.error('Error updating user:', error);
             alert('Có lỗi xảy ra khi cập nhật thông tin');
         }
     });
+
+    $('#avatarPicker').on('change', function() {
+    const formData = new FormData();
+    formData.append('avatar', this.files[0]);
+
+    $.ajax({
+        url: `/api/users/update-avatar/`,
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            alert(response.message);
+            console.log(response);
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+        }
+    });
+});
+// Hàm lấy giá trị CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 }
 
 </script>

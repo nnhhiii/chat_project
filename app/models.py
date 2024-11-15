@@ -8,7 +8,7 @@ class User(models.Model):
     password = models.CharField(max_length=255)
     gender = models.CharField(max_length=10, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
-    avatar = models.CharField(max_length=500, default='user.jpeg')
+    avatar = models.TextField('file', null=True, blank=True)
     cover_picture = models.CharField(max_length=500, default='cover_picture.png')
     bio = models.CharField(max_length=200, blank=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -20,11 +20,18 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class BlockedUser(models.Model):
+    blocker = models.ForeignKey(User, related_name='blocked_by', on_delete=models.CASCADE)
+    blocked = models.ForeignKey(User, related_name='blocked_users', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('blocker', 'blocked')
+
 class ChatRoom(models.Model):
     name = models.CharField(max_length=255)
-    avatar = models.CharField(default='user1.jpg', max_length=500)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_rooms')
-    # members = models.ManyToManyField(User, through='UserChatRoom', related_name='chat_rooms')
+    avatar = models.TextField('file', null=True, blank=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -34,6 +41,10 @@ class UserChatRoom(models.Model):
 
     class Meta:
         unique_together = ('user', 'room')
+
+    def __str__(self):
+        return f"{self.user.username} in {self.room.name}"
+
 
 class Message(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, blank=True, null=True)
