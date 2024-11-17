@@ -140,21 +140,31 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         serializer = ChatRoomSerializer(chat_room)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['post'], url_path='update-avatar')
-    def update_avatar(self, request):
+    @action(detail=False, methods=['post'], url_path='update-room')
+    def update_room(self, request):
         room_id = request.data.get('room_id')
+        name = request.data.get('name')
         file = request.FILES.get('avatar')
 
-        cloudinary_response = cloudinary.uploader.upload(file)
-        avatar_url = cloudinary_response.get('secure_url')
-
+        # Lấy room từ database
         room = ChatRoom.objects.get(id=room_id)
-        room.avatar = avatar_url
+
+        # Nếu có file ảnh, cập nhật avatar
+        if file:
+            cloudinary_response = cloudinary.uploader.upload(file)
+            avatar_url = cloudinary_response.get('secure_url')
+            room.avatar = avatar_url
+
+        # Cập nhật tên nhóm
+        if name:
+            room.name = name
+
         room.save()
 
         return Response({
-            "message": "Đổi ảnh thành công.",
-            "avatar_url": avatar_url
+            "message": "Cập nhật thành công.",
+            "avatar_url": room.avatar,
+            "name": room.name
         }, status=status.HTTP_200_OK)
 
 
@@ -252,7 +262,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     def send_message(self, request):
         content = request.data.get('content')
         file = request.FILES.get('file')
-        message_by = User.objects.get(id=request.session['current_user_id'])
+        room_id = request.data.get('room_id')
+        message_to = request.data.get('message_to')
 
         if file:
             if file.content_type.startswith('video'):
@@ -266,34 +277,19 @@ class MessageViewSet(viewsets.ModelViewSet):
             file_url=None
             message_type = 'text'
 
-        # Kiểm tra room_id và message_to
-        room_id = request.data.get('room_id')
-        message_to_id = request.data.get('message_to')
-
-        if room_id:
-            message_to = None
-        else:
-            message_to = User.objects.get(id=message_to_id)  # Lấy User nếu có message_to
-            room_id = None
 
         # Lưu tin nhắn vào cơ sở dữ liệu
         message = Message.objects.create(
             content=content,
-            message_by=message_by,
+            message_by_id=request.session['current_user_id'],
             message_type=message_type,
-            message_to=message_to,
-            room_id=room_id,
-            file=file_url
+            message_to_id=message_to if message_to else None,
+            room_id=room_id if room_id else None,
+            file=file_url,
+            read_status = True
         )
-        return Response({
-            'content': message.content,
-            'message_type': message.message_type,
-            'file': message.file,
-            'message_by': message.message_by.username,
-            'message_to': message.message_to.username if message.message_to else None,
-            'room_id': message.room_id
-        })
-
+        serializer = self.get_serializer(message)
+        return Response(serializer.data)
 
 def home(request):
     return render(request, 'home.html')

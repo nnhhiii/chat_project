@@ -46,7 +46,7 @@
     padding: 4vh 0 2vh 0
   }
 
-  .bia>.khungcanhan>.canhan1>.anhdaidien {
+  .bia>.khungcanhan>.canhan1>.anhdaidien, .anhdaidien {
     background-size: cover;
     background-position: center;
     width: 17vh;
@@ -374,18 +374,6 @@
       <input type="file" id="filePicker" accept="image/*" name="anhbia" style="display:none;" onchange="filePicked()" />
       <input type="submit" style="display:none" id="saveButton">
     </form>
-    <script>
-      function showFilePicker() {
-        document.getElementById('filePicker').click();
-      }
-      function filePicked() {
-        var input = document.getElementById('filePicker');
-        if (input.files && input.files[0]) {
-          console.log('Tệp đã chọn:', input.files[0].name);
-        }
-        document.getElementById('saveButton').click();
-      }
-    </script>
     <a onclick="return confirm('Bạn có chắc chắn muốn xóa ảnh bìa?')" href="trangcanhan/xoabia.php">
       <button class="ccbia1 congcu1">Xóa</button>
     </a>
@@ -436,60 +424,46 @@
       </div>
     </div>
     <div class="canhan1">
-      <div class="anhdaidien"> </div>
-      <form action="" method="post" enctype="multipart/form-data" id="uploadForm">
-    {% csrf_token %}
-
-    <!-- Nút biểu tượng camera, người dùng sẽ click vào đây để chọn ảnh -->
-    <label for="avatarPicker" style="cursor: pointer;">
-        <i class="fa-solid fa-camera"></i>
-    </label>
-
-    <!-- Ẩn input file, khi click vào label sẽ kích hoạt nó -->
-    <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
-</form>
-
+      <div class="anhdaidien">
+        <a data-toggle="modal" href='#modalUpdateAvatar' style="right:15px;bottom:5px;position:absolute;z-index:2;color:black">
+          <i class="fa-solid fa-camera"></i></a>
+        <div class="modal fade" id="modalUpdateAvatar">
+          <div class="modal-dialog">
+            <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
+              <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Đổi ảnh đại diện</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+              </div>
+              <div class="modal-body" style="padding:0;overflow:auto">
+                <div class="previewAvatar anhdaidien" style="background-image: url('https://res.cloudinary.com/dpuldllty/image/upload/v1731254435/bo4mtqlhbgqaapdlu12g.jpg')">
+                    <form action="" method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                        <label for="avatarPicker" style="cursor: pointer;right:15px;bottom:5px;position:absolute;z-index:2;color:black">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                        <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
+                    </form>
+                </div>
+              </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="updateAvatar()" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="name">
       <div id="username"><strong> username</strong></div>
       <div id="bio" class="tieusu"><br>bio</div>
-    </div>
-    <div class="congcu">
-      <button class="congcu1" id="editButton" onclick="FormTIEUSU()">Chỉnh sửa</button>
-      <div id="inputForm" class="hidden">
-        <form action="" method="post">
-          <input type="text" name="tieusu" placeholder="Nhập tiểu sử của bạn"><br>
-          <input type="submit" value="Lưu" style="border:none;padding:2px 10px">
-          <button style="border:none;padding:2px 10px" type="button" onclick="cancelEdit()">Hủy</button>
-        </form>
-      </div>
-
-      <script>
-        function FormTIEUSU() {
-          var form = document.getElementById("inputForm");
-          var button = document.getElementById("editButton");
-          form.style.display = "block";
-          button.style.display = "none";
-        }
-        function cancelEdit() {
-          var form = document.getElementById("inputForm");
-          var button = document.getElementById("editButton");
-          form.style.display = "none";
-          button.style.display = "block";
-        }
-      </script>
-
-      <a onclick="return confirm('Bạn có chắc chắn muốn xóa tiểu sử?')" href="trangcanhan/xoatieusu.php">
-        <button class="congcu1">Xóa</button>
-      </a>
-
     </div>
   </div>
 </div>
 
 <div style="border-bottom:1px solid lightgray; margin:5% 10vw 0 10vw; width:80%"></div>
 <script>
-    const currentUserId = "{{ request.session.current_user_id }}";
+    let currentUserId = "{{ request.session.current_user_id }}";
     document.addEventListener('DOMContentLoaded', function () {
         fetchMyInfo()
     });
@@ -502,6 +476,7 @@
                 document.getElementById('bio').innerText = user.bio;
                 document.querySelector('.bia1').style.backgroundImage = `url('${user.cover_picture}')`;
                 document.querySelector('.anhdaidien').style.backgroundImage = `url('${user.avatar}')`;
+                document.querySelector('.previewAvatar').style.backgroundImage = `url('${user.avatar}')`;
 
                 document.getElementById('email').value = user.email;
                 document.getElementById('date').value = user.date_of_birth;
@@ -516,55 +491,75 @@
             }
         });
     }
-
     function updateMyInfo() {
-    const updatedUser = {
-        username: document.getElementById('username').value,
-        bio: document.getElementById('bio').value,
-        email: document.getElementById('email').value,
-        date_of_birth: document.getElementById('date').value,
-        gender: document.getElementById('gender').value,
-        study_at: document.getElementById('study_at').value,
-        work_at: document.getElementById('work_at').value,
-        relationship: document.getElementById('relationship').value
-    };
+        const updatedUser = {
+            username: document.getElementById('username').value,
+            bio: document.getElementById('bio').value,
+            email: document.getElementById('email').value,
+            date_of_birth: document.getElementById('date').value,
+            gender: document.getElementById('gender').value,
+            study_at: document.getElementById('study_at').value,
+            work_at: document.getElementById('work_at').value,
+            relationship: document.getElementById('relationship').value
+        };
 
-    $.ajax({
-        url: `/api/users/${currentUserId}/`,
-        method: 'PATCH',
-        data: JSON.stringify(updatedUser),
-        contentType: 'application/json',
-        success: function(response) {
-            alert('Thông tin đã được cập nhật thành công');
-        },
-        error: function(error) {
-            console.error('Error updating user:', error);
-            alert('Có lỗi xảy ra khi cập nhật thông tin');
+        $.ajax({
+            url: `/api/users/${currentUserId}/`,
+            method: 'PATCH',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: JSON.stringify(updatedUser),
+            contentType: 'application/json',
+            success: function(response) {
+                alert('Thông tin đã được cập nhật thành công');
+            },
+            error: function(error) {
+                console.error('Error updating user:', error);
+                alert('Có lỗi xảy ra khi cập nhật thông tin');
+            }
+        });
+    }
+    document.getElementById('avatarPicker').addEventListener('change', function (event) {
+        const preview = document.querySelector('.previewAvatar');
+        const file = event.target.files[0]; // Lấy file được chọn
+
+        if (file) {
+            const objectURL = URL.createObjectURL(file); // Tạo URL tạm thời cho file
+             preview.style.backgroundImage = `url("${objectURL}")`;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none'; // Ẩn ảnh nếu không có file
         }
     });
-
-    $('#avatarPicker').on('change', function() {
-    const formData = new FormData();
-    formData.append('avatar', this.files[0]);
-
-    $.ajax({
-        url: `/api/users/update-avatar/`,
-        type: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            alert(response.message);
-            console.log(response);
-        },
-        error: function(xhr) {
-            console.error('Error:', xhr.responseText);
+    function updateAvatar() {
+        const input = document.getElementById('avatarPicker');
+        if (!input || !input.files || input.files.length === 0) {
+            alert('Vui lòng chọn một file ảnh.');
+            return;
         }
-    });
-});
+
+        const formData = new FormData();
+        formData.append('avatar', input.files[0]); // Lấy file từ input
+
+        $.ajax({
+            url: `/api/users/update-avatar/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                alert(response.message);
+                window.location.reload();
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText);
+            }
+        });
+    }
 // Hàm lấy giá trị CSRF token
 function getCookie(name) {
     let cookieValue = null;
@@ -579,7 +574,6 @@ function getCookie(name) {
         }
     }
     return cookieValue;
-}
 }
 
 </script>
