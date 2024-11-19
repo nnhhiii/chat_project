@@ -20,5 +20,6 @@ urlpatterns = [
     path('profile/<int:userid>', views.profile, name='profile'),
     path('search/', views.search, name='search'),
     path('blockedlist/', views.blocked_list, name='blockedlist'),
+    path('api/search-chats/', views.search_chats, name='search_chats'),
 ]
 

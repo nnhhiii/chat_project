@@ -516,56 +516,30 @@
     <div class="hienthi">
         <div class="col_left">
             <div class="mess">Messages</div>
-   <div class="layout_tim_kiem">
-    <form id="timkiem_form" method="post" action="{% url 'search' %}">
-        {% csrf_token %}
+  <div class="layout_tim_kiem">
+    <form id="timkiem_form">
         <div class="timkiem-container">
-            <input class="tim_kiem" type="text" name="timkiem" placeholder="Tìm kiếm người dùng hoặc nhóm chat...">
-            <button type="submit" class="search-icon-btn">
+            <input
+                class="tim_kiem"
+                type="text"
+                id="searchInput"
+                placeholder="Tìm kiếm người dùng hoặc nhóm chat..."
+                oninput="performLiveSearch(this.value)"
+            />
+            <button type="button" class="search-icon-btn">
                 <img src="https://img.icons8.com/search" alt="search icon" class="search-icon">
             </button>
         </div>
     </form>
-    <a data-toggle="modal" href='#creatGroupChat' class="theAOpenModalCreateRoom" title="Tạo nhóm chat">
+    <a data-toggle="modal" href="#creatGroupChat" class="theAOpenModal" title="Tạo nhóm chat">
         <button><i class="fa-solid fa-user-plus"></i></button>
     </a>
 </div>
 
-<div class="search-results">
-    {% if user_results %}
-        <div class="search-results-container">
-            {% for user in user_results %}
-                <div class="mess1" id="chat-user-{{ user.id }}" style="position:relative" data-chat-user-id="{{ user.id }}" onclick="openChat({{ user.id }}, null)">
-                    <!-- Hiển thị avatar người dùng -->
-                    <div class="ava" style="background-image: url('{% if user.avatar %}{{ user.avatar.url }}{% else %}/static/default-avatar.png{% endif %}'); background-position: center; background-size: cover; width: 50px; height: 50px; border-radius: 50%;"></div>
-                    <div class="username">{{ user.username }}</div>
-                    <br><br>
-                    <div class="mini_content" style="max-width:200px;">
-                        <span class="latest_message">{{ user.latest_message }}</span>
-                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">{{ user.last_active_time }}</div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    {% if chat_results %}
-        <div class="search-results-container">
-            {% for chat in chat_results %}
-                <div class="mess1" id="chat-room-{{ chat.id }}" style="position:relative" data-chat-room-id="{{ chat.id }}" onclick="openChat(null, {{ chat.id }})">
-                    <!-- Hiển thị avatar nhóm chat -->
-                    <div class="ava" style="background-image: url('{% if chat.avatar %}{{ chat.avatar.url }}{% else %}/static/default-group-avatar.png{% endif %}'); background-position: center; background-size: cover; width: 50px; height: 50px; border-radius: 50%;"></div>
-                    <div class="username">{{ chat.name }}</div>
-                    <br><br>
-                    <div class="mini_content" style="max-width:200px;">
-                        <span class="latest_message">{{ chat.latest_message }}</span>
-                        <div style="font-size:12px;position:absolute;right:20px;bottom:20px;" class="time_description">{{ chat.last_active_time }}</div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+<div  id="chatUsersListContainer">
+    <!-- Kết quả tìm kiếm sẽ được thêm vào đây -->
 </div>
+
 
             <div class="modal fade" id="creatGroupChat">
                 <div class="modal-dialog">
@@ -1781,5 +1755,61 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+function performLiveSearch(query) {
+    console.log("Searching for:", query);
+
+    // Kiểm tra nếu không có từ khóa tìm kiếm (từ khóa rỗng)
+    if (query.length === 0) {
+        // Khi không có từ khóa tìm kiếm, hiển thị lại danh sách ban đầu và ẩn kết quả tìm kiếm
+        $('#chatUsersListContainer').fadeOut(); // Ẩn kết quả tìm kiếm
+        $('.chat_users_list').fadeIn(); // Hiển thị danh sách ban đầu (dùng class chat_users_list)
+        return;
+    }
+
+    // Ẩn danh sách người dùng ban đầu và hiển thị kết quả tìm kiếm
+    $('.chat_users_list').fadeOut(); // Ẩn danh sách ban đầu
+    $('#chatUsersListContainer').fadeIn(); // Hiển thị kết quả tìm kiếm
+
+    $.ajax({
+        url: '/api/search-chats/?query=' + query, // API tìm kiếm
+        method: 'GET',
+        success: function (data) {
+            $('#chatUsersListContainer').html(''); // Xóa danh sách trước đó
+
+            if (data.length > 0) {
+                // Nếu có kết quả tìm kiếm
+                $.each(data, function (index, item) {
+                    let html = '';
+                    if (item.type === 'user') {
+                        html = `
+                            <a onclick="openChat(${item.id}, null)">
+                                <div class="mess1" id="chat-user" style="position:relative" data-chat-user-id="${item.id}">
+                                    <div class="ava" style="background-image: url('${item.avatar || '/default-avatar.png'}'); background-position: center"></div>
+                                    <div class="username">${item.username}</div>
+                                </div>
+                            </a>`;
+                    } else if (item.type === 'room') {
+                        html = `
+                            <a onclick="openChat(null, ${item.id})">
+                                <div class="mess1" id="chat-room" style="position:relative" data-chat-room-id="${item.id}">
+                                    <div class="ava" style="background-image: url('${item.avatar || '/default-room-avatar.png'}');"></div>
+                                    <div class="username">${item.name}</div>
+                                </div>
+                            </a>`;
+                    }
+
+                    $('#chatUsersListContainer').append(html); // Thêm kết quả vào container
+                });
+            } else {
+                $('#chatUsersListContainer').html('<p>Không tìm thấy kết quả phù hợp.</p>'); // Không có kết quả
+            }
+        },
+        error: function (error) {
+            console.error('Error searching chats:', error);
+            $('#chatUsersListContainer').html('<p>Đã xảy ra lỗi khi tìm kiếm.</p>'); // Hiển thị lỗi
+        }
+    });
+}
+
 
 </script>

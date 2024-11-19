@@ -400,3 +400,34 @@ def search(request):
         'chat_results': chat_results,
         'query': query,
     })
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import User, ChatRoom
+
+def search_chats(request):
+    query = request.GET.get('query', '')
+    if not query:
+        return JsonResponse([], safe=False)  # Trả về danh sách rỗng nếu không có từ khóa
+
+    users = User.objects.filter(username__icontains=query).values('id', 'username', 'avatar')
+    rooms = ChatRoom.objects.filter(name__icontains=query).values('id', 'name', 'avatar')
+
+    results = []
+
+    for user in users:
+        results.append({
+            'id': user['id'],
+            'username': user['username'],
+            'avatar': user['avatar'],
+            'type': 'user'
+        })
+
+    for room in rooms:
+        results.append({
+            'id': room['id'],
+            'name': room['name'],
+            'avatar': room['avatar'],
+            'type': 'room'
+        })
+
+    return JsonResponse(results, safe=False)
