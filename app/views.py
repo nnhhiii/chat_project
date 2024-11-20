@@ -2,6 +2,7 @@ import cloudinary
 from cloudinary.uploader import upload
 from rest_framework import viewsets, status
 from .forms import LoginForm, SignupForm
+from django.contrib.auth.forms import PasswordChangeForm
 from .serializers import *
 from django.http import JsonResponse
 from rest_framework.response import Response
@@ -490,3 +491,36 @@ def reset_password(request):
     return render(request, 'reset_passwrd.html')
 
 
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import User
+
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Lấy user hiện tại từ session
+        user = User.objects.get(id=request.session['current_user_id'])
+
+        # Kiểm tra mật khẩu cũ (so sánh mật khẩu chưa mã hóa)
+        if user.password == old_password:  # Nếu mật khẩu chưa mã hóa
+            pass
+        else:
+            messages.error(request, "Mật khẩu cũ không đúng.")
+            return redirect('changepass')  # Đảm bảo đường dẫn đúng
+
+        # Kiểm tra mật khẩu mới và xác nhận mật khẩu
+        if new_password != confirm_password:
+            messages.error(request, "Mật khẩu mới không khớp.")
+            return redirect('changepass')
+
+        # Lưu mật khẩu mới (không mã hóa)
+        user.password = new_password
+        user.save()
+
+        messages.success(request, "Mật khẩu đã được thay đổi thành công.")
+        return redirect('home')
+
+    return render(request, 'change_pass.html')

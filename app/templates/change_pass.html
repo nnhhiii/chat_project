@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thay Đổi Mật Khẩu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anta&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia&effect=neon|outline|emboss|shadow-multiple">
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+        }
+
+        button {
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #6abfd0;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        button:hover,
+        button:active,
+        button:focus {
+            background: #538c97;
+        }
+
+        .formngoai {
+            width: 360px;
+            position: relative;
+            z-index: 1;
+            background: #FFFFFF;
+            max-width: 360px;
+            margin: 0 auto;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            border-radius: 2%;
+        }
+
+        .formInput {
+            font-family: 'Roboto', sans-serif;
+            outline: 0;
+            background: #f2f8ff;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            cursor: pointer;
+            color: #6abfd0;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="margin: 0 auto;text-align:center">
+        <div style="color:#b8e0e8;font-family: 'Sofia', sans-serif;font-size:50px;padding:10px 0">Chat</div>
+        <h1 style="padding:10px;font-family: 'Pacifico', cursive; font-weight:100; color:#99ADC3">Thay đổi mật khẩu</h1>
+    </div>
+    <div class="formngoai">
+        <form action="{% url 'changepass' %}" method="POST" role="form">
+            {% csrf_token %}
+            <input id="old_password" type="password" name="old_password" class="formInput" placeholder="Mật khẩu cũ" required>
+            <span class="toggle-password" onclick="togglePassword('old_password')"></span>
+
+            <input id="new_password" type="password" name="new_password" class="formInput" placeholder="Mật khẩu mới" required>
+            <span class="toggle-password" onclick="togglePassword('new_password')"></span>
+
+            <input id="confirm_password" type="password" name="confirm_password" class="formInput" placeholder="Xác nhận mật khẩu mới" required>
+            <span class="toggle-password" onclick="togglePassword('confirm_password')"></span>
+
+            <button type="submit">Đổi mật khẩu</button>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="error-message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </form>
+    </div>
+
+    <script>
+        // Hàm để hiển thị/ẩn mật khẩu
+        function togglePassword(id) {
+            const field = document.getElementById(id);
+            const type = field.type === "password" ? "text" : "password";
+            field.type = type;
+        }
+    </script>
+</body>
+
+</html>
