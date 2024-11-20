@@ -673,23 +673,8 @@
             <div class="title_members" style="display: none">Thành viên nhóm</div>
             <div class="memberList" style="overflow-y: auto;height: 330px;"></div>
         </div>
-       <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modal-id'>Xóa cuộc trò chuyện</a>
-        <div class="modal fade" id="modal-id">
-            <div class="modal-dialog">
-                <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
-                    </div>
-                    <div class="modal-body" style="padding:0">
-                        <form method="post">
 
-                            <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
-                        </form>
-                        <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class = "layout_info2"></div>
     </div>
 </body>
@@ -1159,144 +1144,177 @@ function openChat(recipientId, roomId, latestMessageId) {
             console.error("Lỗi khi lưu tin nhắn:", error);
         }
     });
-    setupMessageForm(recipientId, roomId, currentUserId);
-    // Gọi fetchInfo trước để lấy thông tin, sau đó cập nhật giao diện và tải tin nhắn
-    fetchInfo(recipientId, roomId, function() {
-        let html1, html2, html ='';
-        const data = userInfo[recipientId] || userInfo[roomId];
-        if (data) {
-            if (recipientId) {
-                html1 = `
-                <a href="profile/${data.id}" style="color:black">
-                    <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
-                    <div class="username">${data.username}</div>
-                </a><br><br>
-                <div class="mini_content">Đang hoạt động</div>`;
+ setupMessageForm(recipientId, roomId, currentUserId);
+// Gọi fetchInfo trước để lấy thông tin, sau đó cập nhật giao diện và tải tin nhắn
+fetchInfo(recipientId, roomId, function() {
+    let html1, html2, html = '';
+    const data = userInfo[recipientId] || userInfo[roomId];
+    if (data) {
+        if (recipientId) {
+            html1 = `
+            <a href="profile/${data.id}" style="color:black">
+                <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
+                <div class="username">${data.username}</div>
+            </a><br><br>
+            <div class="mini_content">Đang hoạt động</div>`;
 
-                html = `
-                <a href="profile/${data.id}" style="color:black">
-                    <div class="mess1">
-                        <div class="ava" style="background-image: url('${data.avatar}');"></div>
-                        <div class="username">${data.username}</div><br><br>
-                        <div class="mini_content">${data.email}</div>
-                    </div>
-                </a>`;
+            html = `
+            <a href="profile/${data.id}" style="color:black">
+                <div class="mess1">
+                    <div class="ava" style="background-image: url('${data.avatar}');"></div>
+                    <div class="username">${data.username}</div><br><br>
+                    <div class="mini_content">${data.email}</div>
+                </div>
+            </a>`;
 
-                html2 = `
-                <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalBlock'>Chặn người dùng này</a>
-                <div class="modal fade" id="modalBlock">
-                    <div class="modal-dialog">
-                        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-                            <div class="modal-header">
-                                <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn chặn?</h5>
-                            </div>
-                            <div class="modal-body" style="padding:0">
-                                <form method="post" id="blockForm">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
-                                    <button type="submit" data-user-id="${data.id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Chặn</button>
-                                </form>
-                                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
-                            </div>
+            html2 = `
+            <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalBlock'>Chặn người dùng này</a>
+            <div class="modal fade" id="modalBlock">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                        <div class="modal-header">
+                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn chặn?</h5>
                         </div>
-                    </div>
-                </div>`;
-            }else {
-                html1 = `
-                <a data-toggle="modal" href='#modalUpdateAvatar1' style="color:black">
-                    <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
-                    <div class="username">${data.name}</div>
-                </a><br><br>
-                <div class="modal fade" id="modalUpdateAvatar1">
-                  <div class="modal-dialog">
-                    <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
-                      <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
-                        <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Thông tin nhóm</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
-                      </div>
-                    <form action="" method="post" enctype="multipart/form-data" id="updateRoomForm">
-                      <div class="modal-body" style="padding:10px;overflow:auto">
-
-                            <div class="previewAvatar ava" style="width: 85px; height:85px;position: relative;left:40%;background-image: url('${data.avatar}')">
+                        <div class="modal-body" style="padding:0">
+                            <form method="post" id="blockForm">
                                 <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
-                                <input type="hidden" name="room_id" value="${data.room_id}">
-                                <label for="avatarPicker" style="cursor: pointer;right:0;bottom:0;position:absolute;z-index:2;color:black">
-                                    <i class="fa-solid fa-camera"></i>
-                                </label>
-                                <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
-                            </div>
-                            <div style="float:left;width:100%; margin-top: 15px">
-                                <div style="float:left">Tên nhóm: </div>
-                                <input name="name" style="float:left" value="${data.name}">
-                            </div>
-
-                      </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Lưu</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                <button type="submit" data-user-id="${data.id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Chặn</button>
+                            </form>
+                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
                         </div>
-                    </form>
                     </div>
-                  </div>
-                </div>`;
-
-                html = `
-                    <a data-toggle="modal" href='#modalUpdateAvatar' style="color:black">
-                    <div class="mess1">
-                        <div class="ava" style="background-image: url('${data.avatar}');"></div></a>
-                        <div class="username">${data.name}</div><br><br>
-                    </div>
-                  <div class="modal fade" id="modalUpdateAvatar">
-                  <div class="modal-dialog">
-                    <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
-                      <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
-                        <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Thông tin nhóm</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
-                      </div>
-                    <form action="" method="post" enctype="multipart/form-data" id="updateRoomForm">
-                      <div class="modal-body" style="padding:10px;overflow:auto">
-
-                            <div class="previewAvatar ava" style="width: 85px; height:85px;position: relative;left:40%;background-image: url('${data.avatar}')">
+                </div>
+            </div>
+           <!-- Modal Xóa Cuộc Trò Chuyện -->
+            <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalDeleteChat'>Xóa cuộc trò chuyện</a>
+            <div class="modal fade" id="modalDeleteChat">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                        <div class="modal-header">
+                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa cuộc trò chuyện vĩnh viễn?</h5>
+                        </div>
+                        <div class="modal-body" style="padding:0">
+                            <form method="post" id="deleteChatForm">
                                 <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
-                                <input type="hidden" name="room_id" value="${data.room_id}">
-                                <label for="avatarPicker" style="cursor: pointer;right:0;bottom:0;position:absolute;z-index:2;color:black">
-                                    <i class="fa-solid fa-camera"></i>
-                                </label>
-                                <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
-                            </div>
-                            <div style="float:left;width:100%; margin-top: 15px">
-                                <div style="float:left">Tên nhóm: </div>
-                                <input name="name" style="float:left" value="${data.name}">
-                            </div>
-
-                      </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Lưu</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                <button type="button" id="deleteChatButton" data-recipient-id="${data.id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
+                            </form>
+                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
                         </div>
-                    </form>
                     </div>
+                </div>
+            </div>
+            `;
+        } else {
+            html1 = `
+            <a data-toggle="modal" href='#modalUpdateAvatar1' style="color:black">
+                <div class="ava" style="padding:27px;background-image: url('${data.avatar}');background-position: center;"></div>
+                <div class="username">${data.name}</div>
+            </a><br><br>
+            <div class="modal fade" id="modalUpdateAvatar1">
+              <div class="modal-dialog">
+                <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
+                  <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                    <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Thông tin nhóm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
                   </div>
-                </div>`;
+                <form action="" method="post" enctype="multipart/form-data" id="updateRoomForm">
+                  <div class="modal-body" style="padding:10px;overflow:auto">
+                        <div class="previewAvatar ava" style="width: 85px; height:85px;position: relative;left:40%;background-image: url('${data.avatar}')">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                            <input type="hidden" name="room_id" value="${data.room_id}">
+                            <label for="avatarPicker" style="cursor: pointer;right:0;bottom:0;position:absolute;z-index:2;color:black">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                            <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
+                        </div>
+                        <div style="float:left;width:100%; margin-top: 15px">
+                            <div style="float:left">Tên nhóm: </div>
+                            <input name="name" style="float:left" value="${data.name}">
+                        </div>
+                  </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+                </div>
+              </div>
+            </div>`;
 
-                html2 = `
-                <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalLeave'>Rời nhóm</a>
-                <div class="modal fade" id="modalLeave">
-                    <div class="modal-dialog">
-                        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-                            <div class="modal-header">
-                                <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn rời?</h5>
-                            </div>
-                            <div class="modal-body" style="padding:0">
-                                <form id="leaveRoomForm" method="post">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
-                                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Rời nhóm</button>
-                                </form>
-                                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
-                            </div>
+            html = `
+            <a data-toggle="modal" href='#modalUpdateAvatar' style="color:black">
+            <div class="mess1">
+                <div class="ava" style="background-image: url('${data.avatar}');"></div></a>
+                <div class="username">${data.name}</div><br><br>
+            </div>
+          <div class="modal fade" id="modalUpdateAvatar">
+          <div class="modal-dialog">
+            <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
+              <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Thông tin nhóm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+              </div>
+            <form action="" method="post" enctype="multipart/form-data" id="updateRoomForm">
+              <div class="modal-body" style="padding:10px;overflow:auto">
+                    <div class="previewAvatar ava" style="width: 85px; height:85px;position: relative;left:40%;background-image: url('${data.avatar}')">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                        <input type="hidden" name="room_id" value="${data.room_id}">
+                        <label for="avatarPicker" style="cursor: pointer;right:0;bottom:0;position:absolute;z-index:2;color:black">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                        <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
+                    </div>
+                    <div style="float:left;width:100%; margin-top: 15px">
+                        <div style="float:left">Tên nhóm: </div>
+                        <input name="name" style="float:left" value="${data.name}">
+                    </div>
+              </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+            </div>
+          </div>
+        </div>`;
+
+            html2 = `
+            <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalBlock'>Chặn nhóm này</a>
+            <div class="modal fade" id="modalBlock">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                        <div class="modal-header">
+                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn chặn?</h5>
+                        </div>
+                        <div class="modal-body" style="padding:0">
+                            <form method="post" id="blockForm">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                <button type="submit" data-room-id="${data.room_id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Chặn</button>
+                            </form>
+                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
                         </div>
                     </div>
-                </div>`;
-
+                </div>
+            </div>
+              <!-- Modal Xóa Nhóm Trò Chuyện -->
+            <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalDeleteChatroom'>Xóa nhóm trò chuyện</a>
+            <div class="modal fade" id="modalDeleteChatroom">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                        <div class="modal-header">
+                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Xóa nhóm trò chuyện vĩnh viễn?</h5>
+                        </div>
+                        <div class="modal-body" style="padding:0">
+                            <form method="post" id="deleteChatroomForm">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                <button type="submit" data-room-id="${data.room_id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Xóa</button>
+                            </form>
+                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
             }
             $('#userInfo').html(html1);
             $('.layout_info1').html(html);
@@ -1306,6 +1324,8 @@ function openChat(recipientId, roomId, latestMessageId) {
         loadMessage(roomId, recipientId, currentUserId);
     });
 }
+
+
 // Check if the parameters exist, then call openChat
 if (recipientId) {
     openChat(recipientId, roomId);
@@ -1325,6 +1345,7 @@ document.addEventListener('change', function (event) {
         }
     }
 });
+
 
 let joinedChannels = new Set();
 function joinAllChannels(users, rooms) {
@@ -1388,7 +1409,7 @@ function setupWebSocket(identifiers, currentUserId) {
             console.error(`WebSocket kết nối với ${identifier} bị đóng. Đang thử kết nối lại...`);
             setTimeout(function () {
                 location.reload();
-            }, 5000);
+            }, 500000);
         };
         sockets[identifier] = socket;
     });
@@ -1449,6 +1470,7 @@ function setupMessageForm(recipientId, roomId, currentUserId) {
             $('#image').val('');  // Xóa tệp tin đã chọn
         }
     });
+
 
     $('#messageForm').off('submit').on('submit', function (event) {
         event.preventDefault();
@@ -1608,6 +1630,7 @@ function setupMessageForm(recipientId, roomId, currentUserId) {
         });
     });
 
+
     $(document).off('submit', '#updateRoomForm').on('submit', '#updateRoomForm', function (e) {
         const input = document.getElementById('avatarPicker');
         const nameInput = document.querySelector('input[name="name"]'); // Lấy input tên nhóm
@@ -1740,7 +1763,7 @@ function displayMessage(data, currentUserId) {
     $('.content').scrollTop($('.content')[0].scrollHeight);
 }
 
-// Hàm lấy giá trị CSRF token
+// Hàm lấy CSRF token từ cookie
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -1755,6 +1778,17 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Cấu hình jQuery để gửi CSRF token trong header của yêu cầu AJAX
+const csrfToken = getCookie('csrftoken');
+$.ajaxSetup({
+    headers: {
+        'X-CSRFToken': csrfToken
+    }
+});
+
+
+
 function performLiveSearch(query) {
     console.log("Searching for:", query);
 
@@ -1810,6 +1844,71 @@ function performLiveSearch(query) {
         }
     });
 }
+
+
+// Sự kiện khi nhấn nút Xóa Tin nhắn
+$(document).on('click', '#deleteChatButton', function(event) {
+    event.preventDefault(); // Ngừng hành động mặc định của nút
+
+    var recipientId = $(this).data('recipient-id');  // Lấy recipientId từ thuộc tính data
+    var currentUserId = "{{ request.session.current_user_id }}"; // Lấy current_user_id từ session
+
+    console.log('Đang gửi yêu cầu xóa cho recipientId:', recipientId); // Kiểm tra recipientId
+    console.log('ID người dùng hiện tại:', currentUserId); // In ID người dùng hiện tại
+
+    // Gọi Ajax để thực hiện yêu cầu xóa tin nhắn
+    $.ajax({
+        url: '/api/messages/delete-all-messages/',  // URL để gọi action custom
+        type: 'POST',  // Phương thức POST
+        data: {
+            user_id: recipientId,  // ID người nhận
+            current_user_id: currentUserId,  // ID người dùng hiện tại
+            csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val() // CSRF token nếu cần
+        },
+        success: function(response) {
+            console.log('Xóa cuộc trò chuyện thành công!', response);
+            // Đóng modal sau khi xóa
+            $('#modalDeleteChat').modal('hide');
+            // Tải lại trang sau khi xóa
+            location.reload();  // Tải lại trang
+        },
+        error: function(error) {
+            console.error('Lỗi khi xóa cuộc trò chuyện:', error);
+        }
+    });
+});
+
+// Sự kiện khi nhấn Xóa tất cả tin nhắn trong phòng
+$(document).on('submit', '#deleteRoomChatForm', function(e) {
+    e.preventDefault();
+
+    var roomId = $(this).find('button').data('room-id');  // Lấy room_id từ thuộc tính data của nút
+    var currentUserId = "{{ request.session.current_user_id }}"; // Lấy current_user_id từ session
+
+    console.log('Đang gửi yêu cầu xóa tất cả tin nhắn trong phòng:', roomId); // Kiểm tra roomId
+    console.log('ID người dùng hiện tại:', currentUserId); // In ID người dùng hiện tại
+
+    // Gọi Ajax để thực hiện yêu cầu xóa tin nhắn trong phòng chat
+    $.ajax({
+        url: '/api/messages/delete-all-messages/',  // URL để gọi action custom
+        type: 'POST',
+        data: {
+            room_id: roomId,  // ID phòng chat
+            current_user_id: currentUserId,  // ID người dùng hiện tại
+            csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()  // CSRF token nếu cần
+        },
+        success: function(response) {
+            console.log('Xóa tin nhắn trong phòng thành công!', response);
+            // Đóng modal sau khi xóa
+            $('#modalDeleteRoomChat').modal('hide');
+            // Tải lại trang sau khi xóa
+            location.reload();  // Tải lại trang
+        },
+        error: function(error) {
+            console.error('Lỗi khi xóa tin nhắn trong phòng:', error);
+        }
+    });
+});
 
 
 </script>

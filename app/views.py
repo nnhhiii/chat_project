@@ -258,6 +258,37 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['post'], url_path='delete-all-messages')
+    def delete_all_messages(self, request):
+        current_user_id = request.data.get('current_user_id')  # Người hiện tại
+        room_id = request.data.get('room_id')  # ID nhóm (nếu có)
+        other_user_id = request.data.get('user_id')  # ID người nhận (nếu nhắn riêng)
+
+        print(f"current_user_id: {current_user_id}, room_id: {room_id}, other_user_id: {other_user_id}")
+
+        if room_id:  # Trường hợp nhóm chat
+            messages = Message.objects.filter(room=room_id)
+            print(f"Xóa tin nhắn trong nhóm {room_id}: {messages.count()} tin nhắn")
+        elif other_user_id:  # Trường hợp nhắn riêng
+            messages = Message.objects.filter(
+                Q(message_by=current_user_id, message_to=other_user_id) |
+                Q(message_by=other_user_id, message_to=current_user_id)
+            )
+            print(f"Xóa tin nhắn giữa {current_user_id} và {other_user_id}: {messages.count()} tin nhắn")
+        else:  # Không có đủ dữ liệu
+            return Response({'message': 'Cần cung cấp room_id hoặc user_id'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Xóa tin nhắn nếu có
+        if messages.exists():
+            deleted_count, _ = messages.delete()
+            print(f"Đã xóa {deleted_count} tin nhắn.")
+            return Response({'status': 'success', 'message': f'Đã xóa {deleted_count} tin nhắn.'},
+                            status=status.HTTP_200_OK)
+        else:
+            print("Không tìm thấy tin nhắn để xóa.")
+            return Response({'status': 'not_found', 'message': 'Không tìm thấy tin nhắn để xóa.'},
+                            status=status.HTTP_404_NOT_FOUND)
+
     @action(detail=False, methods=['post'])
     def send_message(self, request):
         content = request.data.get('content')
@@ -381,53 +412,39 @@ def signup_view(request):
         return redirect('login')
 
     return render(request, 'signup.html')
-
-
-def search(request):
-    query = request.POST.get('timkiem', '')
-    user_results = []
-    chat_results = []
+def search_chats(request):
+    query = request.GET.get('query', '').strip()
 
     if query:
-        # Tìm kiếm người dùng theo username
-        user_results = User.objects.filter(Q(username__icontains=query))  # Tìm kiếm người dùng có tên chứa từ khóa
+        try:
+            users = User.objects.filter(username__icontains=query)
+            rooms = ChatRoom.objects.filter(name__icontains=query)
 
-        # Tìm kiếm nhóm chat theo name (tên nhóm chat)
-        chat_results = ChatRoom.objects.filter(Q(name__icontains=query))  # Tìm kiếm nhóm chat có tên chứa từ khóa
+            results = []
 
-    return render(request, 'home.html', {
-        'user_results': user_results,
-        'chat_results': chat_results,
-        'query': query,
-    })
-from django.http import JsonResponse
-from django.db.models import Q
-from .models import User, ChatRoom
+            for user in users:
+                results.append({
+                    'id': user.id,
+                    'type': 'user',
+                    'username': user.username,
+                    # 'avatar': user.avatar.url,
+                })
 
-def search_chats(request):
-    query = request.GET.get('query', '')
-    if not query:
-        return JsonResponse([], safe=False)  # Trả về danh sách rỗng nếu không có từ khóa
+            for room in rooms:
+                results.append({
+                    'id': room.id,
+                    'type': 'room',
+                    'name': room.name,
+                    # 'avatar': room.avatar.url,
+                })
 
-    users = User.objects.filter(username__icontains=query).values('id', 'username', 'avatar')
-    rooms = ChatRoom.objects.filter(name__icontains=query).values('id', 'name', 'avatar')
+            return JsonResponse(results, safe=False)
 
-    results = []
+        except Exception as e:
+            print(f"Error during search: {str(e)}")  # In lỗi ra console để debug
+            return JsonResponse({'error': str(e)}, status=500)
 
-    for user in users:
-        results.append({
-            'id': user['id'],
-            'username': user['username'],
-            'avatar': user['avatar'],
-            'type': 'user'
-        })
+    return JsonResponse({'error': 'No query provided'}, status=400)
 
-    for room in rooms:
-        results.append({
-            'id': room['id'],
-            'name': room['name'],
-            'avatar': room['avatar'],
-            'type': 'room'
-        })
 
-    return JsonResponse(results, safe=False)
+
