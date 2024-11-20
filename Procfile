@@ -1,1 +1,1 @@
-web: daphne -u /tmp/daphne.sock chat_project.asgi:application --bind 0.0.0.0
+web: daphne -b 0.0.0.0 -p 8000 chat_project.asgi:application

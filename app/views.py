@@ -286,8 +286,9 @@ class MessageViewSet(viewsets.ModelViewSet):
         else:  # Không có đủ dữ liệu
             return Response({'message': 'Cần cung cấp room_id hoặc user_id'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'status': 'success', 'message': 'Đã đánh dấu xóa tin nhắn.'},
-                        status=status.HTTP_200_OK)
+        return Response({'status': 'success', 'message': 'Đã đánh dấu xóa tin nhắn.'},status=status.HTTP_200_OK)
+
+
     @action(detail=False, methods=['post'])
     def send_message(self, request):
         content = request.data.get('content')
