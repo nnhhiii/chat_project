@@ -33,7 +33,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://chat-project-h0ws.onrender.com',
+    'http://localhost:8000',  # Nếu chạy trên localhost
+    'http://127.0.0.1:8000',
+]
 
 # Application definition
 
