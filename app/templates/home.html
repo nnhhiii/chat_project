@@ -1380,7 +1380,7 @@ let sockets = {};
 function setupWebSocket(identifiers, currentUserId) {
     // Tạo kết nối WebSocket cho mỗi kênh
     identifiers.forEach(identifier => {
-        const ws_url = `ws://${window.location.host}/ws/app/${identifier}/`;
+        const ws_url = `wss://${window.location.host}/ws/app/${identifier}/`;
         const socket = new WebSocket(ws_url);
 
         socket.onopen = function () {
