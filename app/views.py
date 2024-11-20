@@ -3,6 +3,7 @@ from cloudinary.uploader import upload
 from rest_framework import viewsets, status
 from .forms import LoginForm, SignupForm
 from .serializers import *
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Q
@@ -412,6 +413,8 @@ def signup_view(request):
         return redirect('login')
 
     return render(request, 'signup.html')
+
+
 def search_chats(request):
     query = request.GET.get('query', '').strip()
 
@@ -427,7 +430,7 @@ def search_chats(request):
                     'id': user.id,
                     'type': 'user',
                     'username': user.username,
-                    # 'avatar': user.avatar.url,
+                    'avatar': getattr(user.avatar, 'url', '') if user.avatar else '',  # Kiểm tra avatar
                 })
 
             for room in rooms:
@@ -435,8 +438,11 @@ def search_chats(request):
                     'id': room.id,
                     'type': 'room',
                     'name': room.name,
-                    # 'avatar': room.avatar.url,
+                    'avatar': getattr(room.avatar, 'url', '') if room.avatar else '',  # Kiểm tra avatar
                 })
+
+            if not results:
+                return JsonResponse({'message': 'No results found'}, status=200)
 
             return JsonResponse(results, safe=False)
 
