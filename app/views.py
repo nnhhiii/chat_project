@@ -264,7 +264,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='delete-all-messages')
     def delete_all_messages(self, request):
-        current_user_id = request.data.get('current_user_id')  # Người hiện tại
+        current_user_id = request.data.get('current_user_id')  # Người dùng hiện tại
         room_id = request.data.get('room_id')  # ID nhóm (nếu có)
         other_user_id = request.data.get('user_id')  # ID người nhận (nếu nhắn riêng)
 
@@ -272,27 +272,22 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         if room_id:  # Trường hợp nhóm chat
             messages = Message.objects.filter(room=room_id)
-            print(f"Xóa tin nhắn trong nhóm {room_id}: {messages.count()} tin nhắn")
+            print(f"Đánh dấu xóa tin nhắn trong nhóm {room_id}: {messages.count()} tin nhắn")
+            messages.update(is_deleted_by_user_a=True)  # Đánh dấu tất cả tin nhắn trong nhóm là đã xóa
         elif other_user_id:  # Trường hợp nhắn riêng
             messages = Message.objects.filter(
                 Q(message_by=current_user_id, message_to=other_user_id) |
                 Q(message_by=other_user_id, message_to=current_user_id)
             )
-            print(f"Xóa tin nhắn giữa {current_user_id} và {other_user_id}: {messages.count()} tin nhắn")
+            print(f"Đánh dấu xóa tin nhắn giữa {current_user_id} và {other_user_id}: {messages.count()} tin nhắn")
+            # Đánh dấu trạng thái xóa cho tin nhắn
+            messages.filter(message_by=current_user_id).update(is_deleted_by_user_a=True)
+            messages.filter(message_to=current_user_id).update(is_deleted_by_user_b=True)
         else:  # Không có đủ dữ liệu
             return Response({'message': 'Cần cung cấp room_id hoặc user_id'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Xóa tin nhắn nếu có
-        if messages.exists():
-            deleted_count, _ = messages.delete()
-            print(f"Đã xóa {deleted_count} tin nhắn.")
-            return Response({'status': 'success', 'message': f'Đã xóa {deleted_count} tin nhắn.'},
-                            status=status.HTTP_200_OK)
-        else:
-            print("Không tìm thấy tin nhắn để xóa.")
-            return Response({'status': 'not_found', 'message': 'Không tìm thấy tin nhắn để xóa.'},
-                            status=status.HTTP_404_NOT_FOUND)
-
+        return Response({'status': 'success', 'message': 'Đã đánh dấu xóa tin nhắn.'},
+                        status=status.HTTP_200_OK)
     @action(detail=False, methods=['post'])
     def send_message(self, request):
         content = request.data.get('content')
