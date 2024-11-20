@@ -163,6 +163,13 @@ cloudinary.config(
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Cấu hình URL đăng nhập và URL chuyển hướng
+
 LOGIN_URL = '/login/'  # Đường dẫn đến trang đăng nhập của bạn
 LOGIN_REDIRECT_URL = '/home'  # Đường dẫn đến trang chính sau khi đăng nhập
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'yennhisociuu2004@gmail.com'
+EMAIL_HOST_PASSWORD = 'qniv nutn xkoe mzww'

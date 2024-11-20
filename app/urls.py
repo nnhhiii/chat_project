@@ -21,6 +21,8 @@ urlpatterns = [
     path('profile/<int:userid>', views.profile, name='profile'),
     path('blockedlist/', views.blocked_list, name='blockedlist'),
     path('api/search-chats/', views.search_chats, name='search_chats'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('reset-password/', views.reset_password, name='reset_password'),
 
 ]
 

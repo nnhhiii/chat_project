@@ -1279,23 +1279,23 @@ fetchInfo(recipientId, roomId, function() {
         </div>`;
 
             html2 = `
-            <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalBlock'>Chặn nhóm này</a>
-            <div class="modal fade" id="modalBlock">
-                <div class="modal-dialog">
-                    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
-                        <div class="modal-header">
-                            <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn chặn?</h5>
-                        </div>
-                        <div class="modal-body" style="padding:0">
-                            <form method="post" id="blockForm">
-                                <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
-                                <button type="submit" data-room-id="${data.room_id}" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Chặn</button>
-                            </form>
-                            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalLeave'>Rời nhóm</a>
+                <div class="modal fade" id="modalLeave">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="padding:5px 0 5px 30px">Chắc chắn muốn rời?</h5>
+                            </div>
+                            <div class="modal-body" style="padding:0">
+                                <form id="leaveRoomForm" method="post">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+                                    <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Rời nhóm</button>
+                                </form>
+                                <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
               <!-- Modal Xóa Nhóm Trò Chuyện -->
             <a class="info_2" style="text-decoration:none;float:left" data-toggle="modal" href='#modalDeleteChatroom'>Xóa nhóm trò chuyện</a>
             <div class="modal fade" id="modalDeleteChatroom">

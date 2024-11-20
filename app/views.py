@@ -12,6 +12,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from datetime import date
 from django.contrib.auth.hashers import make_password, check_password
+from django.core.mail import send_mail
+import uuid
+from datetime import datetime, timedelta
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -452,5 +455,43 @@ def search_chats(request):
 
     return JsonResponse({'error': 'No query provided'}, status=400)
 
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            reset_token = str(uuid.uuid4())  # Tạo token ngẫu nhiên
+            user.reset_token = reset_token
+            user.save()
+
+            # Gửi email
+            send_mail(
+                'Quên mật khẩu',
+                f'Xin chào {user.username},\n\nHãy sử dụng mã sau để đặt lại mật khẩu của bạn: {reset_token}',
+                'yennhisociuu2004@gmail.com',
+                [email],
+                fail_silently=False,
+            )
+            messages.success(request, "Đã gửi mã xác nhận qua email!")
+            return redirect('reset_password')
+        except User.DoesNotExist:
+            messages.error(request, "Email không tồn tại!")
+    return render(request, 'forgot_passwrd.html')
+
+def reset_password(request):
+    if request.method == "POST":
+        reset_token = request.POST.get('token')
+        new_password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(reset_token=reset_token)
+            user.password = make_password(new_password)
+            user.reset_token = None  # Xóa token sau khi sử dụng
+            user.save()
+            messages.success(request, "Mật khẩu đã được đặt lại!")
+            return redirect('login')
+        except User.DoesNotExist:
+            messages.error(request, "Token không hợp lệ!!")
+    return render(request, 'reset_passwrd.html')
 
 
