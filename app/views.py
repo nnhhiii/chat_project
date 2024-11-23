@@ -412,7 +412,15 @@ def signup_view(request):
         messages.success(request, "Đăng ký thành công. Bạn có thể đăng nhập ngay bây giờ.")
         return redirect('login')
 
-    return render(request, 'signup.html')
+    # Nếu không phải là POST, trả về form đăng ký
+    days = list(range(1, 32))
+    months = list(range(1, 13))
+    years = list(range(1900, date.today().year + 1))
+    return render(request, 'signup.html', {
+        'days': days,
+        'months': months,
+        'years': years
+    })
 
 
 def search_chats(request):
