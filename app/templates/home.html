@@ -589,7 +589,7 @@
         </div>
         <div class="content"></div>
         <div class="chat_box">
-            <form id="messageForm" method="post" enctype="multipart/form-data">
+            <form id="messageForm" style="display: block" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <textarea type="text" name="content" placeholder="Message..."></textarea>
                 <img class="icon" id="smile_icon" onclick="showIcon()" src="https://img.icons8.com/?size=512&id=y6j3NCqRGOcj&format=png">
@@ -627,6 +627,7 @@
 
                 <i style="scale:1.5; margin-top: 5px;width:40px; height:40px" class="icon fa-solid fa-heart" id="button_heart"></i>
             </form>
+            <div class="blocked_layout" style="display: none; text-align: center;color: gray;">Bạn đã bị chặn bởi người dùng này.</div>
         </div>
     </div>
 
@@ -744,12 +745,6 @@
             document.getElementById("myIcon").style.display = "none";
         }
     });
-
-    $(document).on('click', '.theAOpenModalCreateRoom', function () {
-        $('.showUsers').html('');
-        fetchAllUsers();
-    });
-
 </script>
 
 
@@ -822,21 +817,22 @@ function fetchAllUsers(callback) {
         method: 'GET',
         success: function (data) {
              $.each(data, function (index, user) {
+                 if (user.id === Number(currentUserId)) {
+                     return;
+                 }
                  if (callback) {
                     callback(data);
-                }
-                 if (user.id === Number(currentUserId)) {
-                    return;
-                }
-                htmlUserCreateRoom = `
-                    <label for="mess${user.id}" class="mess1">
-                        <div class="ava" style="background-image: url('${user.avatar}')"></div>
-                        <div class="username">${user.username}</div><br><br>
-                        <div class="mini_content">${user.email}</div>
-                        <input type="checkbox" name="addUserId" value="${user.id}" id="mess${user.id}" style="float:right;margin:-20px 20px">
-                    </label>`;
+                }else {
+                     htmlUserCreateRoom = `
+                        <label for="mess${user.id}" class="mess1">
+                            <div class="ava" style="background-image: url('${user.avatar}')"></div>
+                            <div class="username">${user.username}</div><br><br>
+                            <div class="mini_content">${user.email}</div>
+                            <input type="checkbox" name="addUserId" value="${user.id}" id="mess${user.id}" style="float:right;margin:-20px 20px">
+                        </label>`;
 
-                 $('.showUsers').append(htmlUserCreateRoom);
+                     $('.showUsers').append(htmlUserCreateRoom);
+                 }
             });
         },
         error: function (error) {
@@ -1064,6 +1060,8 @@ function calculateTimeAgo(timestamp) {
     }
 }
 document.addEventListener('DOMContentLoaded', function () {
+    $('.showUsers').html('');
+    fetchAllUsers();
     fetchChatUsers();
     fetchChatRooms();
     getQueryParams()
@@ -1117,6 +1115,8 @@ function openChat(recipientId, roomId, latestMessageId) {
     $('.showUsersNotInRoomId').html('');
     document.querySelector(".title_members").style.display = "none";
     document.getElementById("btnAddUser").style.display = "none";
+    document.querySelector(".blocked_layout").style.display = "none";
+    document.getElementById("messageForm").style.display = "block";
 
     socketKey = roomId ? `room_${roomId}` : `user_${Math.min(currentUserId, recipientId)}_${Math.max(currentUserId, recipientId)}`;
 
@@ -1321,11 +1321,28 @@ fetchInfo(recipientId, roomId, function() {
             $('.layout_info1').html(html);
             $('.layout_info2').html(html2);
         }
+    // Kiểm tra trạng thái chặn
+        checkBlockStatus(recipientId, currentUserId);
         // Sau khi lấy thông tin xong, tải tin nhắn
         loadMessage(roomId, recipientId, currentUserId);
     });
 }
 
+function checkBlockStatus(recipientId) {
+    $.ajax({
+        url: `/api/blockedusers/check-blocked-status/?recipient_id=${recipientId}`,
+        type: "GET",
+        success: function (response) {
+            if (response.status === "blocked_by_recipient") {
+                document.querySelector(".blocked_layout").style.display = "block";
+                document.getElementById("messageForm").style.display = "none";
+            }
+        },
+        error: function (xhr) {
+            console.error("Error checking block status:", xhr.responseText);
+        }
+    });
+}
 
 // Check if the parameters exist, then call openChat
 if (recipientId) {
@@ -1394,11 +1411,6 @@ function setupWebSocket(identifiers, currentUserId) {
             if (socketKey === identifier) {
                 // Nếu đúng kênh, hiển thị tin nhắn
                 displayMessage(data, currentUserId);
-                latestMessages = [];
-                fetchChatRooms();
-                fetchChatUsers();
-            } else {
-                // Nếu không đúng kênh, load danh sách tin nhắn
                 latestMessages = [];
                 fetchChatRooms();
                 fetchChatUsers();

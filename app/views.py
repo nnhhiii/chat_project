@@ -61,6 +61,23 @@ class BlockedUserViewSet(viewsets.ModelViewSet):
     queryset = BlockedUser.objects.all()
     serializer_class = BlockedUserSerializer
 
+    @action(detail=False, methods=['get'], url_path='check-blocked-status')
+    def check_block_status(self, request):
+        recipient_id = request.query_params.get('recipient_id')
+        current_user_id = request.session.get('current_user_id')
+        try:
+            # Kiểm tra nếu current_user đã chặn recipient_id
+            if BlockedUser.objects.filter(blocker=current_user_id, blocked_id=recipient_id).exists():
+                return JsonResponse({"status": "blocked_by_you"}, status=200)
+
+            # Kiểm tra nếu current_user bị recipient_id chặn
+            elif BlockedUser.objects.filter(blocker_id=recipient_id, blocked=current_user_id).exists():
+                return JsonResponse({"status": "blocked_by_recipient"}, status=200)
+
+            return JsonResponse({"status": "not_blocked"}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
     @action(detail=False, methods=['get'], url_path='get-blocked-users')
     def get_blocked_users(self, request):
         current_user_id = request.session.get('current_user_id')
@@ -93,7 +110,7 @@ class BlockedUserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='unblock')
     def unblock(self, request):
-        blocker_id = request.data.get('blocker_id')
+        blocker_id = request.session.get('current_user_id')
         blocked_id = request.data.get('blocked_id')
 
         blocker = User.objects.get(id=blocker_id)
@@ -324,6 +341,9 @@ class MessageViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 def home(request):
+    user_id = request.session.get('current_user_id')
+    if not user_id:
+        return redirect('login')  # Điều hướng nếu chưa đăng nhập
     return render(request, 'home.html')
 def blocked_list(request):
     return render(request, 'blocked.html')
@@ -438,7 +458,7 @@ def search_chats(request):
                     'id': user.id,
                     'type': 'user',
                     'username': user.username,
-                    'avatar': getattr(user.avatar, 'url', '') if user.avatar else '',  # Kiểm tra avatar
+                    'avatar': user.avatar
                 })
 
             for room in rooms:
@@ -446,7 +466,7 @@ def search_chats(request):
                     'id': room.id,
                     'type': 'room',
                     'name': room.name,
-                    'avatar': getattr(room.avatar, 'url', '') if room.avatar else '',  # Kiểm tra avatar
+                    'avatar': room.avatar
                 })
 
             if not results:

@@ -119,10 +119,9 @@
                     url: '/api/blockedusers/unblock/',
                     method: 'POST',
                     headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        },
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
                     data: {
-                        blocker_id: currentUserId,
                         blocked_id: userId
                     },
                     success: function(response) {
