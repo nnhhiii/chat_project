@@ -11,8 +11,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         for identifier in self.identifiers:
             # Xác định tên nhóm từ identifier
             if identifier.startswith("room_"):
-                room_id = identifier.split("_")[1]
-                room_group_name = f'room_{room_id}'
+                room = identifier.split("_")[1]
+                room_group_name = f'room_{room}'
                 self.room_group_names.append(room_group_name)
             elif identifier.startswith("user_"):
                 user_ids = list(map(int, identifier.split("_")[1:]))
@@ -39,7 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        room_id = data.get('room_id', None)
+        room = data.get('room', None)
         recipient_id = data.get('message_to', None)
         content = data.get('content', None)
         message_type = data.get('message_type', 'text')
@@ -48,9 +48,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         avatar = data.get('avatar', None)
         username = data.get('username', None)
 
-        # Nếu tin nhắn có room_id thì gửi đến group của phòng chat
-        if room_id:
-            room_group_name = f'room_{room_id}'
+        # Nếu tin nhắn có room thì gửi đến group của phòng chat
+        if room:
+            room_group_name = f'room_{room}'
             await self.channel_layer.group_send(
                 room_group_name,
                 {
@@ -61,7 +61,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message_by': message_by,
                     'avatar': avatar,
                     'username': username,
-                    'room_id': room_id
+                    'room': room
                 }
             )
         # Nếu tin nhắn có recipient_id thì gửi đến group của người nhận
@@ -88,9 +88,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'content': event['content'],
             'message_type': event.get('message_type', 'text'),
             'message_by': event.get('message_by', 'Unknown'),
-            'file': event.get('file'),
+            'file': event.get('file', 'Unknown'),
             'avatar': event['avatar'],
             'username': event['username'],
             'message_to': event.get('message_to', 'Unknown'),
-            'room_id': event.get('room_id')
+            'room': event.get('room', 'Unknown')
         }))

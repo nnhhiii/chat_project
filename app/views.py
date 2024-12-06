@@ -42,19 +42,36 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='update-avatar')
     def update_avatar(self, request):
-        user = request.session.get('current_user_id')
+        current_user_id = request.session.get('current_user_id')
         file = request.FILES.get('avatar')
 
         cloudinary_response = cloudinary.uploader.upload(file)
         avatar_url = cloudinary_response.get('secure_url')
 
-        user = User.objects.get(id=user)
+        user = User.objects.get(id=current_user_id)
         user.avatar = avatar_url
         user.save()
 
         return Response({
-            "message": "Đổi ảnh thành công.",
-            "avatar_url": avatar_url
+            "message": "Đổi ảnh đại diện thành công.",
+            "cover_picture_url": avatar_url
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='update-cover-picture')
+    def update_cover_picture(self, request):
+        current_user_id = request.session.get('current_user_id')
+        file = request.FILES.get('cover_picture')
+
+        cloudinary_response = cloudinary.uploader.upload(file)
+        cover_picture_url = cloudinary_response.get('secure_url')
+
+        user = User.objects.get(id=current_user_id)
+        user.cover_picture = cover_picture_url
+        user.save()
+
+        return Response({
+            "message": "Đổi ảnh bìa thành công.",
+            "cover_picture_url": cover_picture_url
         }, status=status.HTTP_200_OK)
 
 class BlockedUserViewSet(viewsets.ModelViewSet):
@@ -311,7 +328,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     def send_message(self, request):
         content = request.data.get('content')
         file = request.FILES.get('file')
-        room_id = request.data.get('room_id')
+        room_id = request.data.get('room')
         message_to = request.data.get('message_to')
 
         if file:
@@ -411,13 +428,12 @@ def signup_view(request):
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email này đã được sử dụng. Vui lòng nhập email khác.")
             return redirect('signup')
-        elif User.objects.filter(username=username).exists():
-            messages.error(request, "Tên người dùng này đã được sử dụng. Vui lòng nhập tên khác.")
-            return redirect('signup')
 
         # Tạo đối tượng người dùng mới
         user = User.objects.create(
             username=username,
+            avatar="https://res.cloudinary.com/dpuldllty/image/upload/v1733470087/default-user_pb93s4.webp",
+            cover_picture = "https://res.cloudinary.com/dpuldllty/image/upload/v1719823212/samples/food/pot-mussels.jpg",
             email=email,
             password=make_password(password),  # Mã hóa mật khẩu
             gender=gender,
@@ -534,7 +550,9 @@ def change_password(request):
         user = User.objects.get(id=request.session['current_user_id'])
 
         # Kiểm tra mật khẩu cũ (so sánh mật khẩu chưa mã hóa)
-        if user.password == old_password:  # Nếu mật khẩu chưa mã hóa
+        if user.password == old_password:
+            pass
+        elif check_password(old_password, user.password):
             pass
         else:
             messages.error(request, "Mật khẩu cũ không đúng.")
@@ -545,8 +563,8 @@ def change_password(request):
             messages.error(request, "Mật khẩu mới không khớp.")
             return redirect('changepass')
 
-        # Lưu mật khẩu mới (không mã hóa)
-        user.password = new_password
+        # Lưu mật khẩu mới
+        user.password = make_password(new_password)
         user.save()
 
         messages.success(request, "Mật khẩu đã được thay đổi thành công.")

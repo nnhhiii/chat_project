@@ -10,6 +10,25 @@
 
 </head>
 <style>
+.col_menu{
+    width: 70px;
+    float: left;
+    height: 100%
+}
+.col_menu > a >img{
+    float: left;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    margin: 10% 17%;
+}
+.col_menu > a > img:hover{
+    cursor: pointer;
+    background-color: lightgray;
+    border-radius: 10px;
+    transform: scale(1.1);
+    transition: 0.3s;
+}
   .hidden {
     display: none;
   }
@@ -366,99 +385,149 @@
     cursor: pointer;
   }
 </style>
-
+<div class="col_menu">
+    <a href="/blockedlist/"><img style="margin-top: 100px;" width="24" height="24" src="https://img.icons8.com/external-tanah-basah-basic-outline-tanah-basah/24/external-block-user-user-tanah-basah-basic-outline-tanah-basah.png" alt="external-block-user-user-tanah-basah-basic-outline-tanah-basah"/></a>
+    <a href="/"><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
+    <a href="/myprofile/"><img width="50" height="50" src="https://img.icons8.com/fluency-systems-regular/50/user--v1.png" alt="user--v1"/></a>
+    <a style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'><img width="32" height="32" src="https://img.icons8.com/windows/32/exit.png" alt="exit"/></a>
+    <a href="/change-password/"><img width="50" height="50" src="https://img.icons8.com/?size=100&id=64777&format=png&color=000000" alt="user--v1"/></a>
+    <div class="modal fade" id="logout-modal">
+<div class="modal-dialog">
+    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+        <div class="modal-header">
+            <h5 class="modal-title" style="padding:5px 0 5px 30px">Bạn muốn đăng xuất?</h5>
+        </div>
+        <div class="modal-body" style="padding:0">
+            <form action="{% url 'logout' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Đăng xuất</button>
+            </form>
+            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
 <div class="bia">
   <div class="bia1">
-    <button class="ccbia congcu1" onclick="showFilePicker()">Chỉnh sửa</button>
-    <form action="trangcanhan/suabia.php" method="post" enctype="multipart/form-data">
-      <input type="file" id="filePicker" accept="image/*" name="anhbia" style="display:none;" onchange="filePicked()" />
-      <input type="submit" style="display:none" id="saveButton">
-    </form>
-    <a onclick="return confirm('Bạn có chắc chắn muốn xóa ảnh bìa?')" href="trangcanhan/xoabia.php">
-      <button class="ccbia1 congcu1">Xóa</button>
-    </a>
-  </div>
-  <div class="khungcanhan" style="position:relative">
-      <a data-toggle="modal" href='#modal-id-thongtin' style="scale:1.5;right:10px;top:10px;position:absolute;z-index:2;color:black">
-          <i class="fa-regular fa-pen-to-square"></i></a>
-    <div class="modal fade" id="modal-id-thongtin">
-      <div class="modal-dialog">
-        <div class="modal-content" style="width:380px;height:480px; border-radius:15px;margin:16vh auto">
-          <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
-            <h5 class="modal-title" style="position:absolute;left:41%;text-align:center;color:black">Thông tin</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
-          </div>
-          <div class="modal-body" style="padding:0;overflow:auto">
-            <div class="thongtin">
-              <div class="thongtin_icon"><i class="fa-solid fa-at"></i></div>Email
-              <input type="email" id="email">
-            </div>
-            <div class="thongtin">
-              <div class="thongtin_icon"><i class="fa-solid fa-calendar-days"></i></div>Ngày sinh
-              <input id="date" type="date">
-            </div>
-            <div class="thongtin">
-              <div class="thongtin_icon">
-                <i class="fa-solid fa-mars"></i>
-              </div>Giới tính
-              <input id="gender">
-            </div>
-            <div class="thongtin">
-              <div class="thongtin_icon"><i class="fa-solid fa-school"></i></div>Học tại
-              <input id="study_at">
-            </div>
-            <div class="thongtin">
-              <div class="thongtin_icon"><i class="fa-solid fa-building"></i></div>Làm việc tại
-              <input id="work_at">
-            </div>
-            <div class="thongtin">
-              <div class="thongtin_icon"><i class="fa-solid fa-heart"></i></div>Mối quan hệ
-              <input id="relationship">
-            </div>
-          </div>
-            <div class="modal-footer">
-                <button type="button" onclick="updateMyInfo()" class="btn btn-primary">Lưu</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-            </div>
-        </div>
-      </div>
-    </div>
-    <div class="canhan1">
-      <div class="anhdaidien">
-        <a data-toggle="modal" href='#modalUpdateAvatar' style="right:15px;bottom:5px;position:absolute;z-index:2;color:black">
-          <i class="fa-solid fa-camera"></i></a>
-        <div class="modal fade" id="modalUpdateAvatar">
+      <a data-toggle="modal" href='#modalUpdateCoverPicture' style="right:15px;bottom:5px;position:absolute;z-index:2;color:black">
+          <button class="ccbia congcu1">Chỉnh sửa</button>
+      </a>
+      <div class="modal fade" id="modalUpdateCoverPicture">
           <div class="modal-dialog">
-            <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
+            <div class="modal-content" style="border-radius:15px;margin:16vh auto">
               <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
-                <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Đổi ảnh đại diện</h5>
+                <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Đổi ảnh bìa</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
               </div>
               <div class="modal-body" style="padding:0;overflow:auto">
-                <div class="previewAvatar anhdaidien" style="background-image: url('https://res.cloudinary.com/dpuldllty/image/upload/v1731254435/bo4mtqlhbgqaapdlu12g.jpg')">
+                <div class="previewCoverPicture bia1" style="background-position: center;background-size: contain;height: 50vh;background-image: url('https://res.cloudinary.com/dpuldllty/image/upload/v1731254435/bo4mtqlhbgqaapdlu12g.jpg')">
                     <form action="" method="post" enctype="multipart/form-data" id="uploadForm">
                     {% csrf_token %}
-                        <label for="avatarPicker" style="cursor: pointer;right:15px;bottom:5px;position:absolute;z-index:2;color:black">
-                            <i class="fa-solid fa-camera"></i>
+                        <label for="coverPicturePicker" style="cursor: pointer;right:15px;bottom:5px;position:absolute;z-index:2;color:black">
+                            <i class="fa-solid fa-camera" style="color:white"></i>
                         </label>
-                        <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
+                        <input type="file" id="coverPicturePicker" accept="image/*" name="anhbia" style="display:none;" />
                     </form>
                 </div>
               </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="updateAvatar()" class="btn btn-primary">Lưu</button>
+                    <button type="button" onclick="updateCoverPicture()" class="btn btn-primary">Lưu</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                 </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="name">
-      <div id="username"><strong> username</strong></div>
-      <div id="bio" class="tieusu"><br>bio</div>
-    </div>
   </div>
+      <div class="khungcanhan" style="position:relative">
+          <a data-toggle="modal" href='#modal-id-thongtin' style="scale:1.5;right:10px;top:10px;position:absolute;z-index:2;color:black">
+              <i class="fa-regular fa-pen-to-square"></i></a>
+        <div class="modal fade" id="modal-id-thongtin">
+          <div class="modal-dialog">
+            <div class="modal-content" style="width:380px;height:480px; border-radius:15px;margin:16vh auto">
+              <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                <h5 class="modal-title" style="position:absolute;left:41%;text-align:center;color:black">Thông tin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+              </div>
+              <div class="modal-body" style="padding:0;overflow:auto">
+                  <div class="thongtin">
+                      <div class="thongtin_icon"><i class="fa-solid fa-user"></i></div>Username
+                      <input type="text" id="username1">
+                </div>
+                <div class="thongtin">
+                  <div class="thongtin_icon"><i class="fa-solid fa-at"></i></div>Email
+                  <input type="email" id="email">
+                </div>
+                  <div class="thongtin">
+                      <div class="thongtin_icon"><i class="fa-solid fa-pen"></i></div>Tiểu sử
+                      <input type="text" id="bio1">
+                  </div>
+                <div class="thongtin">
+                  <div class="thongtin_icon"><i class="fa-solid fa-calendar-days"></i></div>Ngày sinh
+                  <input id="date" type="date">
+                </div>
+                <div class="thongtin">
+                  <div class="thongtin_icon">
+                    <i class="fa-solid fa-mars"></i>
+                  </div>Giới tính
+                  <input id="gender">
+                </div>
+                <div class="thongtin">
+                  <div class="thongtin_icon"><i class="fa-solid fa-school"></i></div>Học tại
+                  <input id="study_at">
+                </div>
+                <div class="thongtin">
+                  <div class="thongtin_icon"><i class="fa-solid fa-building"></i></div>Làm việc tại
+                  <input id="work_at">
+                </div>
+                <div class="thongtin">
+                  <div class="thongtin_icon"><i class="fa-solid fa-heart"></i></div>Mối quan hệ
+                  <input id="relationship">
+                </div>
+              </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="updateMyInfo()" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="canhan1">
+          <div class="anhdaidien">
+            <a data-toggle="modal" href='#modalUpdateAvatar' style="right:15px;bottom:5px;position:absolute;z-index:2;color:black">
+              <i class="fa-solid fa-camera"></i></a>
+            <div class="modal fade" id="modalUpdateAvatar">
+              <div class="modal-dialog">
+                <div class="modal-content" style="width:380px; border-radius:15px;margin:16vh auto">
+                  <div class="modal-header" style="border-bottom: 1px solid #DBDBDB;height:50px">
+                    <h5 class="modal-title" style="position:absolute;left:31%;text-align:center;color:black">Đổi ảnh đại diện</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="border:none;padding:30px;background:none;position:absolute;right:0">&times;</button>
+                  </div>
+                  <div class="modal-body" style="padding:0;overflow:auto">
+                    <div class="previewAvatar anhdaidien" style="background-image: url('https://res.cloudinary.com/dpuldllty/image/upload/v1731254435/bo4mtqlhbgqaapdlu12g.jpg')">
+                        <form action="" method="post" enctype="multipart/form-data" id="uploadForm">
+                        {% csrf_token %}
+                            <label for="avatarPicker" style="cursor: pointer;right:15px;bottom:5px;position:absolute;z-index:2;color:black">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                            <input type="file" id="avatarPicker" accept="image/*" name="anhdaidien" style="display:none;" />
+                        </form>
+                    </div>
+                  </div>
+                    <div class="modal-footer">
+                        <button type="button" onclick="updateAvatar()" class="btn btn-primary">Lưu</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="name">
+          <div id="username"><strong> username</strong></div>
+          <div id="bio" class="tieusu"><br>bio</div>
+        </div>
+      </div>
 </div>
 
 <div style="border-bottom:1px solid lightgray; margin:5% 10vw 0 10vw; width:80%"></div>
@@ -475,9 +544,12 @@
                 document.getElementById('username').innerText = user.username;
                 document.getElementById('bio').innerText = user.bio;
                 document.querySelector('.bia1').style.backgroundImage = `url('${user.cover_picture}')`;
+                document.querySelector('.previewCoverPicture').style.backgroundImage = `url('${user.cover_picture}')`;
                 document.querySelector('.anhdaidien').style.backgroundImage = `url('${user.avatar}')`;
                 document.querySelector('.previewAvatar').style.backgroundImage = `url('${user.avatar}')`;
 
+                document.getElementById('username1').value = user.username;
+                document.getElementById('bio1').value = user.bio;
                 document.getElementById('email').value = user.email;
                 document.getElementById('date').value = user.date_of_birth;
                 document.getElementById('gender').value = user.gender;
@@ -493,8 +565,8 @@
     }
     function updateMyInfo() {
         const updatedUser = {
-            username: document.getElementById('username').value,
-            bio: document.getElementById('bio').value,
+            username: document.getElementById('username1').value,
+            bio: document.getElementById('bio1').value,
             email: document.getElementById('email').value,
             date_of_birth: document.getElementById('date').value,
             gender: document.getElementById('gender').value,
@@ -513,10 +585,11 @@
             contentType: 'application/json',
             success: function(response) {
                 alert('Thông tin đã được cập nhật thành công');
+                window.location.reload();
             },
             error: function(error) {
                 console.error('Error updating user:', error);
-                alert('Có lỗi xảy ra khi cập nhật thông tin');
+                alert('Email này đã được sử dụng cho tài khoản khác.');
             }
         });
     }
@@ -544,6 +617,46 @@
 
         $.ajax({
             url: `/api/users/update-avatar/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                alert(response.message);
+                window.location.reload();
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText);
+            }
+        });
+    }
+    document.getElementById('coverPicturePicker').addEventListener('change', function (event) {
+        const preview = document.querySelector('.previewCoverPicture');
+        const file = event.target.files[0]; // Lấy file được chọn
+
+        if (file) {
+            const objectURL = URL.createObjectURL(file); // Tạo URL tạm thời cho file
+             preview.style.backgroundImage = `url("${objectURL}")`;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none'; // Ẩn ảnh nếu không có file
+        }
+    });
+    function updateCoverPicture() {
+        const input = document.getElementById('coverPicturePicker');
+        if (!input || !input.files || input.files.length === 0) {
+            alert('Vui lòng chọn một file ảnh.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('cover_picture', input.files[0]); // Lấy file từ input
+
+        $.ajax({
+            url: `/api/users/update-cover-picture/`,
             type: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')

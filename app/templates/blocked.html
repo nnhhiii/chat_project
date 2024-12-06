@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <style>
+.col_menu{
+    width: 70px;
+    float: left;
+    height: 100%
+}
+.col_menu > a >img{
+    float: left;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    margin: 10% 17%;
+}
+.col_menu > a > img:hover{
+    cursor: pointer;
+    background-color: lightgray;
+    border-radius: 10px;
+    transform: scale(1.1);
+    transition: 0.3s;
+}
     body {
         font-family: Arial, sans-serif;
         background-color: #f9f9f9;
@@ -81,8 +100,39 @@
     <meta charset="UTF-8">
     <title>Blocked Users</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
+<div class="col_menu">
+    <a href="/blockedlist/"><img style="margin-top: 100px;" width="24" height="24" src="https://img.icons8.com/external-tanah-basah-basic-outline-tanah-basah/24/external-block-user-user-tanah-basah-basic-outline-tanah-basah.png" alt="external-block-user-user-tanah-basah-basic-outline-tanah-basah"/></a>
+    <a href="/"><img src="https://img.icons8.com/?size=256&id=dJOh7yntdHD9&format=png"></a>
+    <a href="/myprofile/"><img width="50" height="50" src="https://img.icons8.com/fluency-systems-regular/50/user--v1.png" alt="user--v1"/></a>
+    <a style="text-decoration:none;float:left" data-toggle="modal" href='#logout-modal'><img width="32" height="32" src="https://img.icons8.com/windows/32/exit.png" alt="exit"/></a>
+    <a href="/change-password/"><img width="50" height="50" src="https://img.icons8.com/?size=100&id=64777&format=png&color=000000" alt="user--v1"/></a>
+    <div class="modal fade" id="logout-modal">
+<div class="modal-dialog">
+    <div class="modal-content" style="border-radius:20px;margin:32vh auto;width:50vh">
+        <div class="modal-header">
+            <h5 class="modal-title" style="padding:5px 0 5px 30px">Bạn muốn đăng xuất?</h5>
+        </div>
+        <div class="modal-body" style="padding:0">
+            <form action="{% url 'logout' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" class="info_2" style="text-align:center;border:none;background:none;border-bottom:1px solid #EEE;padding:15px 20px">Đăng xuất</button>
+            </form>
+            <div class="info_2" data-dismiss="modal" style="text-align:center;color:black;padding:20px">Hủy</div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
     <h1>Danh sách người dùng bị block</h1>
     <ul id="blockedUsersList"></ul>
 

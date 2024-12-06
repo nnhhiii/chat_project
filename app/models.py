@@ -20,6 +20,9 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.username}"
+
 class BlockedUser(models.Model):
     blocker = models.ForeignKey(User, related_name='blocked_by', on_delete=models.CASCADE)
     blocked = models.ForeignKey(User, related_name='blocked_users', on_delete=models.CASCADE)
@@ -28,12 +31,18 @@ class BlockedUser(models.Model):
     class Meta:
         unique_together = ('blocker', 'blocked')
 
+    def __str__(self):
+        return f"{self.blocker.username} chặn {self.blocked.username}"
+
 class ChatRoom(models.Model):
     name = models.CharField(max_length=255)
     avatar = models.TextField('file', null=True, blank=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name}"
 
 class UserChatRoom(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,8 +67,6 @@ class Message(models.Model):
     is_deleted_by_user_a = models.BooleanField(default=False)  # Đánh dấu tin nhắn đã bị ẩn đối với người dùng A
     is_deleted_by_user_b = models.BooleanField(default=False)  # Đánh dấu tin nhắn đã bị ẩn đối với người dùng B
 
-    def __str__(self):
-        return f"Message from {self.message_by} to {self.message_to}"
 
     def delete_message(self, user):
         """Đánh dấu tin nhắn là đã xóa đối với người dùng."""
